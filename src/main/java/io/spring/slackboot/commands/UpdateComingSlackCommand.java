@@ -26,14 +26,17 @@ import org.springframework.stereotype.Component;
 @Component
 public class UpdateComingSlackCommand extends AbstractSlackCommand {
 
+	public static final String GITHUB_REPO = "https://github.com/spring-io/slackboot";
+	public static final String TRAVIS_REPO = "https://travis-ci.com/spring-io/slackboot";
+
 	@Override
 	public boolean match(MessageEvent message) {
 
 		return message.getAttachments().stream()
 			.filter(attachment ->
-				attachment.getText().contains("<https://github.com/spring-io/slackboot/commit")
+				attachment.getText().contains("<" + GITHUB_REPO + "/commit")
 					||
-				attachment.getText().contains("Build <https://travis-ci.com/spring-io/slackboot")
+				attachment.getText().contains("Build <" + TRAVIS_REPO)
 			)
 			.findAny()
 			.isPresent();
@@ -43,7 +46,7 @@ public class UpdateComingSlackCommand extends AbstractSlackCommand {
 	public void handle(MessageEvent message) {
 
 		message.getAttachments().stream()
-			.filter(attachment -> attachment.getText().contains("<https://github.com/spring-io/slackboot/commit"))
+			.filter(attachment -> attachment.getText().contains("<" + GITHUB_REPO + "/commit"))
 			.findAny()
 			.ifPresent(attachment -> {
 				getSlackService().sendMessage(getToken(), "Ooh! Has someone made a change?", message.getChannel(), true);
@@ -51,7 +54,7 @@ public class UpdateComingSlackCommand extends AbstractSlackCommand {
 
 		message.getAttachments().stream()
 			.filter(attachment ->
-				attachment.getText().contains("Build <https://travis-ci.com/spring-io/slackboot/builds")
+				attachment.getText().contains("Build <" + TRAVIS_REPO + "/builds")
 				&&
 				attachment.getText().contains("passed in")
 			)
@@ -62,7 +65,7 @@ public class UpdateComingSlackCommand extends AbstractSlackCommand {
 
 		message.getAttachments().stream()
 			.filter(attachment ->
-				attachment.getText().contains("Build <https://travis-ci.com/spring-io/slackboot/builds")
+				attachment.getText().contains("Build <" + TRAVIS_REPO + "/builds")
 					&&
 					attachment.getText().contains("errored in")
 			)
