@@ -104,16 +104,15 @@ public class GuideCacheSlackCommand extends SelfAwareSlackCommand {
 
 		gitHubTemplate.repoOperations().getHooks("spring-guides", guide).stream()
 			.map(gitHubHook -> gitHubTemplate.getRestTemplate().getForObject(gitHubHook.getUrl(), GitHubHookDetails.class))
-			.filter(gitHubHookDetails ->
-				Optional.ofNullable(gitHubHookDetails.getConfig().getUrl())
-					.map(url -> url.contains("spring.io/webhook"))
-					.orElseGet(() -> {
-						getSlackService().sendMessage(getToken(), "Hmm. Looks like you don't have a webhook yet. See https://github.com/spring-guides/getting-started-guides/wiki/Create-a-Repository for help.", message.getChannel(), true);
-						return false;
-					}))
-			.map(gitHubHookDetails ->
-				gitHubTemplate.getRestTemplate().postForEntity(gitHubHookDetails.getUrl() + "/test", null, Object.class))
-			.forEach(response -> {
+			.map(gitHubHookDetails -> gitHubHookDetails.getConfig().getUrl())
+			.filter(url -> url.contains("spring.io/webhook"))
+			.findAny()
+			.map(url -> Optional.of(gitHubTemplate.getRestTemplate().postForEntity(url + "/test", null, Object.class)))
+			.orElseGet(() -> {
+				getSlackService().sendMessage(getToken(), "Hmm. Looks like you don't have a webhook yet. See https://github.com/spring-guides/getting-started-guides/wiki/Create-a-Repository for help.", message.getChannel(), true);
+				return Optional.empty();
+			})
+			.ifPresent(response -> {
 				if (response.getStatusCodeValue() < 300) {
 					getSlackService().sendMessage(getToken(), guide + " has been cleared.", message.getChannel(), true);
 					getCounterService().increment("slack.boot.guides.cacheCleared.successful");

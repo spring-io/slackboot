@@ -15,24 +15,20 @@
  */
 package io.spring.slackboot.commands;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import freemarker.template.Configuration;
-import freemarker.template.DefaultObjectWrapper;
-import freemarker.template.DefaultObjectWrapperBuilder;
-import freemarker.template.SimpleHash;
 import io.spring.slackboot.commands.domain.Guide;
 import io.spring.slackboot.core.SelfAwareSlackCommand;
 import io.spring.slackboot.core.domain.MessageEvent;
-import io.spring.slackboot.core.services.FreemarkerService;
+import io.spring.slackboot.core.services.MustacheTemplateService;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.springframework.stereotype.Component;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author Greg Turnquist
@@ -44,14 +40,10 @@ public class ListGuidesSlackCommand extends SelfAwareSlackCommand {
 
 	public static final String GUIDE_CLASS = "a.guide--title";
 
-	private final FreemarkerService freemarkerService;
+	private final MustacheTemplateService mustacheTemplateService;
 
-	private final DefaultObjectWrapper wrapper;
-
-	public ListGuidesSlackCommand(FreemarkerService freemarkerService) {
-
-		this.freemarkerService = freemarkerService;
-		this.wrapper = new DefaultObjectWrapperBuilder(Configuration.VERSION_2_3_25).build();
+	public ListGuidesSlackCommand(MustacheTemplateService mustacheTemplateService) {
+		this.mustacheTemplateService = mustacheTemplateService;
 	}
 
 	@Override
@@ -71,10 +63,10 @@ public class ListGuidesSlackCommand extends SelfAwareSlackCommand {
 				.map(guide -> new Guide(guide))
 				.collect(Collectors.toList());
 
-			SimpleHash model = new SimpleHash(this.wrapper);
+			HashMap<String, Object> model = new HashMap<>();
 			model.put("guides", guides);
 			model.put("site", "https://spring.io");
-			String helpMessage = freemarkerService.processTemplateIntoString(this.getClass().getSimpleName() + "-message.ftl", model);
+			String helpMessage = mustacheTemplateService.processTemplateIntoString(this.getClass().getSimpleName() + "-message", model);
 
 			getSlackService().sendMessage(getToken(), helpMessage, message.getChannel(), true);
 
