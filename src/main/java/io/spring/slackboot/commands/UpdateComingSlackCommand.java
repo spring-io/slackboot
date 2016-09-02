@@ -57,7 +57,7 @@ public class UpdateComingSlackCommand extends AbstractSlackCommand {
 			)
 			.findAny()
 			.ifPresent(attachment -> {
-				getSlackService().sendMessage(getToken(), "Yipee! Looks like a new upgrade is coming my way. (I may be offline just a tad.)", message.getChannel(), true);
+				getSlackService().sendMessage(getToken(), "Yipee! Looks like a new upgrade for me.", message.getChannel(), true);
 			});
 
 		message.getAttachments().stream()
