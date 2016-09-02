@@ -15,7 +15,6 @@
  */
 package io.spring.slackboot.core;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -56,7 +55,7 @@ class SlackWebSocketHandler extends TextWebSocketHandler {
 			slackEventHandlers.stream()
 				.filter(slackEventHandler -> slackEventHandler.handles(jsonMessage))
 				.forEach(slackEventHandler -> slackEventHandler.handle(message.getPayload()));
-		} catch (IOException|RuntimeException e) {
+		} catch (Exception e) {
 			// Swallow all exceptions to avoid breaking the event loop.
 			log.error(e.getMessage());
 		}

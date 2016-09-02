@@ -15,15 +15,14 @@
  */
 package io.spring.slackboot.core;
 
-import static org.assertj.core.api.BDDAssertions.*;
+import static org.assertj.core.api.BDDAssertions.then;
 import static org.mockito.BDDMockito.*;
-import static org.mockito.Mockito.*;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import io.spring.slackboot.core.handlers.SlackEventHandler;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -37,6 +36,8 @@ import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import io.spring.slackboot.core.handlers.SlackEventHandler;
 
 /**
  * @author Greg Turnquist
@@ -95,7 +96,7 @@ public class SlackWebSocketHandlerTests {
 
 		// given
 		Map<String, String> source = new HashMap<>();
-		source.put("type", "message");
+		source.put("type", "foobar-type");
 		source.put("text", "I'm a simple message");
 		TextMessage message = new TextMessage(objectMapper.writeValueAsString(source));
 		given(handler.handles(any())).willReturn(true);
