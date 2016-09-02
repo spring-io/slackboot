@@ -41,11 +41,11 @@ class SlackWebSocketHandler extends TextWebSocketHandler {
 
 	private final ObjectMapper objectMapper;
 
-	@Autowired(required = false)
 	private List<SlackEventHandler> slackEventHandlers;
 
-	public SlackWebSocketHandler(ObjectMapper objectMapper) {
+	public SlackWebSocketHandler(ObjectMapper objectMapper, @Autowired(required = false) List<SlackEventHandler> slackEventHandlers) {
 		this.objectMapper = objectMapper;
+		this.slackEventHandlers = slackEventHandlers;
 	}
 
 	@Override
@@ -56,15 +56,14 @@ class SlackWebSocketHandler extends TextWebSocketHandler {
 			slackEventHandlers.stream()
 				.filter(slackEventHandler -> slackEventHandler.handles(jsonMessage))
 				.forEach(slackEventHandler -> slackEventHandler.handle(message.getPayload()));
-		} catch (IOException e) {
+		} catch (IOException|RuntimeException e) {
 			// Swallow all exceptions to avoid breaking the event loop.
 			log.error(e.getMessage());
 		}
 	}
 
-	@Override
-	public void handleTransportError(WebSocketSession session, Throwable exception) throws Exception {
-		log.error(exception.getMessage());
-		super.handleTransportError(session, exception);
+	public List<SlackEventHandler> getSlackEventHandlers() {
+		return slackEventHandlers;
 	}
+
 }
