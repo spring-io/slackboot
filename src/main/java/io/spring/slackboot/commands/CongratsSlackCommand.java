@@ -20,10 +20,7 @@ import java.util.Random;
 
 import io.spring.slackboot.core.SelfAwareSlackCommand;
 import io.spring.slackboot.core.domain.MessageEvent;
-import io.spring.slackboot.core.domain.SlackBootProperties;
-import io.spring.slackboot.core.services.SlackService;
 
-import org.springframework.boot.actuate.metrics.CounterService;
 import org.springframework.stereotype.Component;
 
 /**
@@ -36,19 +33,9 @@ public class CongratsSlackCommand extends SelfAwareSlackCommand {
 
 	private String[] thanks = new String []{"Thanks!", "Glad to be of help"};
 
-	private final SlackService slackService;
-
-	private final SlackBootProperties slackBootProperties;
-
-	private final CounterService counterService;
-
 	private final Random random;
 
-	public CongratsSlackCommand(SlackService slackService, SlackBootProperties slackBootProperties, CounterService counterService) {
-
-		this.slackService = slackService;
-		this.slackBootProperties = slackBootProperties;
-		this.counterService = counterService;
+	public CongratsSlackCommand() {
 		this.random = new Random();
 	}
 
@@ -63,11 +50,11 @@ public class CongratsSlackCommand extends SelfAwareSlackCommand {
 	@Override
 	public void handle(MessageEvent message) {
 		if (message.getText().toLowerCase().contains("thanks")) {
-			slackService.sendMessage(slackBootProperties.getToken(), "You're welcome.", message.getChannel(), true);
+			getSlackService().sendMessage(getToken(), "You're welcome.", message.getChannel(), true);
 		} else {
-			slackService.sendMessage(slackBootProperties.getToken(), thanks[random.nextInt(thanks.length)], message.getChannel(), true);
+			getSlackService().sendMessage(getToken(), thanks[random.nextInt(thanks.length)], message.getChannel(), true);
 		}
 
-		counterService.increment("slack.boot.executed." + this.getClass().getSimpleName());
+		getCounterService().increment("slack.boot.executed." + this.getClass().getSimpleName());
 	}
 }

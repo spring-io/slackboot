@@ -24,12 +24,9 @@ import java.util.stream.Collectors;
 import io.spring.slackboot.core.SelfAwareSlackCommand;
 import io.spring.slackboot.core.SlackCommand;
 import io.spring.slackboot.core.domain.MessageEvent;
-import io.spring.slackboot.core.domain.SlackBootProperties;
 import io.spring.slackboot.core.services.FreemarkerService;
-import io.spring.slackboot.core.services.SlackService;
 
 import org.springframework.beans.BeansException;
-import org.springframework.boot.actuate.metrics.CounterService;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
@@ -40,21 +37,13 @@ import org.springframework.stereotype.Component;
 @Component
 public class HelpSlackCommand extends SelfAwareSlackCommand implements ApplicationContextAware {
 
-	private final SlackService slackService;
-
-	private final SlackBootProperties slackBootProperties;
-
 	private final FreemarkerService freemarkerService;
-
-	private final CounterService counterService;
 
 	private ApplicationContext applicationContext;
 
-	public HelpSlackCommand(SlackService slackService, SlackBootProperties slackBootProperties, FreemarkerService freemarkerService, CounterService counterService) {
-		this.slackService = slackService;
-		this.slackBootProperties = slackBootProperties;
+	public HelpSlackCommand(FreemarkerService freemarkerService) {
+
 		this.freemarkerService = freemarkerService;
-		this.counterService = counterService;
 	}
 
 	@Override
@@ -78,11 +67,9 @@ public class HelpSlackCommand extends SelfAwareSlackCommand implements Applicati
 		model.put("commands", commandHelp);
 		String helpMessage = freemarkerService.processTemplateIntoString(this.getClass().getSimpleName() + "-message.ftl", model);
 
-		slackService.sendMessage(slackBootProperties.getToken(),
-			helpMessage,
-			message.getChannel(), true);
+		getSlackService().sendMessage(getToken(), helpMessage, message.getChannel(), true);
 
-		counterService.increment("slack.boot.executed." + this.getClass().getSimpleName());
+		getCounterService().increment("slack.boot.executed." + this.getClass().getSimpleName());
 
 	}
 

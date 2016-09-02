@@ -26,7 +26,7 @@ import org.springframework.context.ApplicationListener;
 /**
  * @author Greg Turnquist
  */
-public abstract class SelfAwareSlackCommand implements SlackCommand, ApplicationListener<BotLoggedInEvent> {
+public abstract class SelfAwareSlackCommand extends AbstractSlackCommand implements ApplicationListener<BotLoggedInEvent> {
 
 	private static final Logger log = LoggerFactory.getLogger(SelfAwareSlackCommand.class);
 
