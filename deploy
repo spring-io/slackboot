@@ -1,0 +1,9 @@
+#!/bin/bash
+
+# Login to PWS
+./cf api https://api.run.pivotal.io
+./cf auth $CF_USERNAME $CF_PASSWORD
+
+# Target spring.io and deploy
+./cf target -o spring.io -s Guides
+./cf push slackboot -p target/slackboot-*.jar
