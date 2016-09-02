@@ -15,19 +15,16 @@
  */
 package io.spring.slackboot.core.domain;
 
-import java.util.List;
-
 import lombok.Data;
 
 /**
  * @author Greg Turnquist
  */
 @Data
-public class MessageEvent {
+public class Attachment {
 
-	private String type;
-	private String channel;
-	private String user;
+	private String fallback;
 	private String text;
-	private List<Attachment> attachments;
+	private String pretext;
+
 }
