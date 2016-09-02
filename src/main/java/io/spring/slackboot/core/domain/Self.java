@@ -15,12 +15,16 @@
  */
 package io.spring.slackboot.core.domain;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * @author Greg Turnquist
  */
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Self {
 
 	private String id;

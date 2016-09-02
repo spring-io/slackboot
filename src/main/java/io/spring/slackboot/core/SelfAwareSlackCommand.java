@@ -48,4 +48,7 @@ public abstract class SelfAwareSlackCommand extends AbstractSlackCommand impleme
 	}
 	protected abstract boolean also(MessageEvent message);
 
+	public Self getSelf() {
+		return self;
+	}
 }
