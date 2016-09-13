@@ -1,0 +1,8 @@
+logging:
+  level:
+    io:
+      spring:
+        slackboot:
+          core:
+            services:
+              SlackService: DEBUG
