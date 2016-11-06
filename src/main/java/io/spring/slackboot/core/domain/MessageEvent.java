@@ -15,11 +15,13 @@
  */
 package io.spring.slackboot.core.domain;
 
-import java.util.List;
-
 import lombok.Data;
 
+import java.util.List;
+
 /**
+ * Message sent over a Slack channel.
+ *
  * @author Greg Turnquist
  */
 @Data

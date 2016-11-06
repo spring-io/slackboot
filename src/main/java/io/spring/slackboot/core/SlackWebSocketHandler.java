@@ -15,22 +15,25 @@
  */
 package io.spring.slackboot.core;
 
-import java.util.List;
-import java.util.Map;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.spring.slackboot.core.domain.SlackBootProperties;
 import io.spring.slackboot.core.handlers.SlackEventHandler;
+import org.apache.commons.lang.math.RandomUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.time.Duration;
+import java.util.List;
+import java.util.Map;
 
 /**
+ * Listeng to the WebSocket and consume messages.
+ *
  * @author Greg Turnquist
  */
 @Component
@@ -40,16 +43,34 @@ class SlackWebSocketHandler extends TextWebSocketHandler {
 
 	private final ObjectMapper objectMapper;
 
+	private final SlackBootProperties slackBootProperties;
+
+	private DeadmanSwitch deadmanSwitch;
+
 	private List<SlackEventHandler> slackEventHandlers;
 
-	public SlackWebSocketHandler(ObjectMapper objectMapper, @Autowired(required = false) List<SlackEventHandler> slackEventHandlers) {
+	public SlackWebSocketHandler(ObjectMapper objectMapper,
+								 SlackBootProperties slackBootProperties,
+								 DeadmanSwitch deadmanSwitch,
+								 @Autowired(required = false) List<SlackEventHandler> slackEventHandlers) {
 		this.objectMapper = objectMapper;
+		this.slackBootProperties = slackBootProperties;
+		this.deadmanSwitch = deadmanSwitch;
 		this.slackEventHandlers = slackEventHandlers;
 	}
 
 	@Override
 	protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
 		try {
+			deadmanSwitch.reset("WebSocket", Duration.ofMinutes(slackBootProperties.getDeadmanLimitMinutes()));
+
+			if (slackBootProperties.isRandomNap()) {
+				if (RandomUtils.nextBoolean()) {
+					log.info("I think I'll just take a little nap...");
+					Thread.sleep(120000L);
+				}
+			}
+
 			Map<String, String> jsonMessage = objectMapper.readValue(message.getPayload(), Map.class);
 			log.info(jsonMessage.toString());
 			slackEventHandlers.stream()

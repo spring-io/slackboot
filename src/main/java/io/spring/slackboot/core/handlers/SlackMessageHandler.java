@@ -15,20 +15,16 @@
  */
 package io.spring.slackboot.core.handlers;
 
-import java.util.List;
-
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.spring.slackboot.core.SlackCommand;
 import io.spring.slackboot.core.domain.MessageEvent;
-import io.spring.slackboot.core.domain.SlackBootProperties;
-import io.spring.slackboot.core.services.SlackService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.List;
 
 /**
  * @author Greg Turnquist
@@ -38,20 +34,33 @@ public class SlackMessageHandler extends SlackEventHandler<MessageEvent> {
 
 	private static final Logger log = LoggerFactory.getLogger(SlackMessageHandler.class);
 
-	private final SlackService slackService;
-
-	private final SlackBootProperties slackBootProperties;
-
 	private final List<SlackCommand> commands;
 
-	public SlackMessageHandler(ObjectMapper objectMapper, SlackService slackService, SlackBootProperties slackBootProperties,
+	public SlackMessageHandler(ObjectMapper objectMapper,
 							   @Autowired(required = false) List<SlackCommand> commands) {
 		super(objectMapper);
-		this.slackService = slackService;
-		this.slackBootProperties = slackBootProperties;
 		this.commands = commands;
 	}
 
+	/**
+	 * Handles messages of "type=message".
+	 *
+	 * @param type
+	 * @return
+	 */
+	@Override
+	protected boolean doesHandle(String type) {
+		return type.equals("message");
+	}
+
+
+	/**
+	 * Handle the message by visiting each {@link SlackCommand}, looking for a match, and handing it over.
+	 *
+	 * NOTE: ALL commands that match will get to read it.
+	 *
+	 * @param message
+	 */
 	@Override
 	protected void doHandle(MessageEvent message) {
 		log.info("Reading '" + message.getText() + "' on channel '" + message.getChannel() + "'");
@@ -61,11 +70,11 @@ public class SlackMessageHandler extends SlackEventHandler<MessageEvent> {
 			.forEach(slackCommand -> slackCommand.handle(message));
 	}
 
-	@Override
-	protected boolean doesHandle(String type) {
-		return type.equals("message");
-	}
-
+	/**
+	 * Convert from JSON to {@link MessageEvent}.
+	 *
+	 * @return
+	 */
 	@Override
 	protected TypeReference<?> type() {
 		return new TypeReference<MessageEvent>() {};

@@ -18,15 +18,16 @@ package io.spring.slackboot.core;
 import static org.assertj.core.api.BDDAssertions.then;
 import static org.mockito.BDDMockito.*;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import io.spring.slackboot.core.domain.SlackBootProperties;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
@@ -111,6 +112,7 @@ public class SlackWebSocketHandlerTests {
 	}
 
 	@Configuration
+	@EnableConfigurationProperties(SlackBootProperties.class)
 	static class TestConfig {
 
 		@Bean
@@ -118,9 +120,15 @@ public class SlackWebSocketHandlerTests {
 			return new ObjectMapper();
 		}
 
+		@MockBean
+		DeadmanSwitch deadmanSwitch;
+
 		@Bean
-		SlackWebSocketHandler slackWebSocketHandler(ObjectMapper objectMapper, List<SlackEventHandler> handlers) {
-			return new SlackWebSocketHandler(objectMapper, handlers);
+		SlackWebSocketHandler slackWebSocketHandler(ObjectMapper objectMapper,
+													SlackBootProperties slackBootProperties,
+													DeadmanSwitch deadmanSwitch,
+													List<SlackEventHandler> handlers) {
+			return new SlackWebSocketHandler(objectMapper, slackBootProperties, deadmanSwitch, handlers);
 		}
 	}
 

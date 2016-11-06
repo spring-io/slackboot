@@ -15,15 +15,14 @@
  */
 package io.spring.slackboot.core.handlers;
 
-import java.io.IOException;
-import java.util.Map;
-import java.util.Optional;
-
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.IOException;
+import java.util.Map;
+import java.util.Optional;
 
 /**
  * @author Greg Turnquist
@@ -38,10 +37,12 @@ public abstract class SlackEventHandler<T> {
 		this.objectMapper = objectMapper;
 	}
 
-	public void handle(String message) {
-		convert(message).ifPresent(this::doHandle);
-	}
-
+	/**
+	 * Does it handles this type of message?
+	 *
+	 * @param jsonMessage
+	 * @return
+	 */
 	public boolean handles(Map<String, String> jsonMessage) {
 
 		return Optional.ofNullable(jsonMessage.get("type"))
@@ -49,6 +50,21 @@ public abstract class SlackEventHandler<T> {
 			.orElseThrow(() -> new IllegalStateException("All Slack messages must have 'type'"));
 	}
 
+	/**
+	 * Process the incoming message.
+	 *
+	 * @param message
+	 */
+	public void handle(String message) {
+		convert(message).ifPresent(this::doHandle);
+	}
+
+	/**
+	 * Transform the message into a Optional, strongly typed message.
+	 *
+	 * @param message
+	 * @return
+	 */
 	protected Optional<T> convert(String message) {
 		try {
 			return Optional.of(objectMapper.readValue(message, type()));
@@ -59,9 +75,25 @@ public abstract class SlackEventHandler<T> {
 
 	}
 
-	protected abstract void doHandle(T convertedMessage);
-
+	/**
+	 * Based on the "type" embedded in the message, decide whether or not to handle it.
+	 *
+	 * @param type
+	 * @return
+	 */
 	protected abstract boolean doesHandle(String type);
 
+	/**
+	 * After having converted the message to T, handle it.
+	 *
+	 * @param convertedMessage
+	 */
+	protected abstract void doHandle(T convertedMessage);
+
+	/**
+	 * What type does this handler process?
+	 *
+	 * @return
+	 */
 	protected abstract TypeReference<?> type();
 }

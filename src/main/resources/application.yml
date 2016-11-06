@@ -4,5 +4,6 @@ logging:
       spring:
         slackboot:
           core:
+            DeadmanSwitch: DEBUG
             services:
               SlackService: DEBUG

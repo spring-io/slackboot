@@ -18,6 +18,8 @@ package io.spring.slackboot.core.domain;
 import lombok.Data;
 
 /**
+ * Some Slack messages put extra information in {@link Attachment}s.
+ *
  * @author Greg Turnquist
  */
 @Data

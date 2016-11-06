@@ -21,6 +21,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
 /**
+ * Bootified property settings.
+ *
  * @author Greg Turnquist
  */
 @Data
@@ -31,5 +33,10 @@ public class SlackBootProperties {
 	private String token;
 	private String githubToken;
 	private boolean debugFeign = false;
+
+	private long deadmanLimitMinutes = 1L;
+
+	// Pure debugging tool, meant to force a deadman switch to kick in.
+	private boolean randomNap = false;
 
 }

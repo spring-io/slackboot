@@ -15,19 +15,20 @@
  */
 package io.spring.slackboot.core.services;
 
-import java.io.IOException;
-
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.springframework.stereotype.Service;
 import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
 
+import java.io.IOException;
+
 /**
+ * Service to render HTML Slack messages using Freemarker template engine.
+ *
  * @author Greg Turnquist
  */
 @Service

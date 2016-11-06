@@ -15,9 +15,6 @@
  */
 package io.spring.slackboot.core;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
@@ -31,8 +28,14 @@ import io.spring.slackboot.core.domain.BotLoggedInEvent;
 import io.spring.slackboot.core.domain.RtmStartResponse;
 import io.spring.slackboot.core.domain.SlackBootProperties;
 import io.spring.slackboot.core.services.SlackService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
+ * Essentially, when the app is up, programmatically open the WebSocket connection to Slack's RTM service.
+ * Then publish an event containing the bot's details for all interested parties, and then turn it over to
+ * {@link SlackWebSocketHandler}.
+ *
  * @author Greg Turnquist
  */
 @Component
@@ -47,7 +50,8 @@ public class SlackBootInitializer implements ApplicationListener<ApplicationRead
 
 	private ApplicationEventPublisher applicationEventPublisher;
 
-	public SlackBootInitializer(SlackService slackService, SlackBootProperties slackBootProperties,
+	public SlackBootInitializer(SlackService slackService,
+								SlackBootProperties slackBootProperties,
 								SlackWebSocketHandler slackWebSocketHandler) {
 
 		this.slackService = slackService;
@@ -85,6 +89,5 @@ public class SlackBootInitializer implements ApplicationListener<ApplicationRead
 
 			log.error("Connection not ok!");
 		}
-
 	}
 }

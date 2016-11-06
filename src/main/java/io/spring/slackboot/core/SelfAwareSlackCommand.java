@@ -24,6 +24,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationListener;
 
 /**
+ * Base class to implement a {@link SlackCommand} that only responds to "@slackboot blah blah", i.e. calling the
+ * bot out.
+ *
  * @author Greg Turnquist
  */
 public abstract class SelfAwareSlackCommand extends AbstractSlackCommand implements ApplicationListener<BotLoggedInEvent> {
@@ -32,20 +35,45 @@ public abstract class SelfAwareSlackCommand extends AbstractSlackCommand impleme
 
 	private Self self;
 
+	/**
+	 * Listen for the {@link BotLoggedInEvent} and capture {@link Self}, so it knows the current name of the
+	 * bot to listen for.
+	 *
+	 * @param event
+	 */
 	@Override
 	public void onApplicationEvent(BotLoggedInEvent event) {
-		log.info(event.getSelf().getName() + " is now logged in.");
+		log.info(event.getSelf().getName() + " is now logged in for " + getClass().getSimpleName() + ".");
 		this.self = event.getSelf();
 	}
 
+	/**
+	 * Perform a match based on both "@botname" and an pluggable check.
+	 *
+	 * @param message
+	 * @return
+	 */
 	@Override
 	public boolean match(MessageEvent message) {
 		return itsMe(message) && also(message);
 	}
 
+	/**
+	 * Does the message call out the bot directly?
+	 *
+	 * @param message
+	 * @return
+	 */
 	protected boolean itsMe(MessageEvent message) {
 		return message.getText().contains("<@" + self.getId() + ">");
 	}
+
+	/**
+	 * The contextual check each concrete {@link SelfAwareSlackCommand} must implement.
+	 *
+	 * @param message
+	 * @return
+	 */
 	protected abstract boolean also(MessageEvent message);
 
 	public Self getSelf() {

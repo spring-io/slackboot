@@ -20,6 +20,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
+ * Captures Slack bot's {@code id} and {@code name}. Avoids hardcoding the name of the bot, allowing
+ * commands to "@" the bot dynamically.
+ *
  * @author Greg Turnquist
  */
 @Data

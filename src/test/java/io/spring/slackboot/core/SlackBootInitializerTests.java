@@ -15,7 +15,6 @@
  */
 package io.spring.slackboot.core;
 
-import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
@@ -26,8 +25,6 @@ import io.spring.slackboot.core.domain.RtmStartResponse;
 import io.spring.slackboot.core.domain.Self;
 import io.spring.slackboot.core.domain.SlackBootProperties;
 import io.spring.slackboot.core.services.SlackService;
-import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -99,7 +96,8 @@ public class SlackBootInitializerTests {
 		}
 
 		@Bean
-		SlackBootInitializer slackBootInitializer(SlackService slackService, SlackBootProperties slackBootProperties,
+		SlackBootInitializer slackBootInitializer(SlackService slackService,
+												  SlackBootProperties slackBootProperties,
 												  SlackWebSocketHandler slackWebSocketHandler) {
 			return new SlackBootInitializer(slackService, slackBootProperties, slackWebSocketHandler);
 		}

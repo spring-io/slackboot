@@ -20,6 +20,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
+ * First response when opening a WebSocket with Slack's RTM service.
+ *
  * @author Greg Turnquist
  */
 @Data

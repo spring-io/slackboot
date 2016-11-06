@@ -25,6 +25,9 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.boot.actuate.metrics.CounterService;
 
 /**
+ * Convenience base class for {@link SlackCommand}s. That way, commands don't have to inject these
+ * commonly used things in every single command.
+ *
  * @author Greg Turnquist
  */
 public abstract class AbstractSlackCommand implements SlackCommand, BeanFactoryAware, InitializingBean {
@@ -50,18 +53,38 @@ public abstract class AbstractSlackCommand implements SlackCommand, BeanFactoryA
 		this.counterService = beanFactory.getBean(CounterService.class);
 	}
 
+	/**
+	 * This is the service needed to post messages to Slack.
+	 *
+	 * @return
+	 */
 	public SlackService getSlackService() {
 		return slackService;
 	}
 
+	/**
+	 * Quick access to any configuration properties.
+	 *
+	 * @return
+	 */
 	public SlackBootProperties getSlackBootProperties() {
 		return slackBootProperties;
 	}
 
+	/**
+	 * Shortcut to the oauth token, allowing other commands to be invoked.
+	 *
+	 * @return
+	 */
 	public String getToken() {
 		return slackBootProperties.getToken();
 	}
 
+	/**
+	 * Quick access to {@link CounterService}, so commands can tabulate metrics.
+	 *
+	 * @return
+	 */
 	public CounterService getCounterService() {
 		return counterService;
 	}
