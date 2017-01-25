@@ -15,10 +15,6 @@
  */
 package io.spring.slackboot.commands;
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Optional;
-
 import io.spring.slackboot.commands.domain.GitHubHookDetails;
 import io.spring.slackboot.commands.domain.Guide;
 import io.spring.slackboot.core.SelfAwareSlackCommand;
@@ -27,9 +23,12 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.springframework.social.github.api.impl.GitHubTemplate;
 import org.springframework.stereotype.Component;
+
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Optional;
 
 /**
  * @author Greg Turnquist
@@ -108,7 +107,10 @@ public class GuideCacheSlackCommand extends SelfAwareSlackCommand {
 			.filter(gitHubHookDetails ->
 				Optional.ofNullable(gitHubHookDetails.getConfig().getUrl())
 					.map(url -> url.contains("spring.io/webhook"))
-					.orElse(false))
+					.orElseGet(() -> {
+						getSlackService().sendMessage(getToken(), "Hmm. Looks like you don't have a webhook yet. See https://github.com/spring-guides/getting-started-guides/wiki/Create-a-Repository for help.", message.getChannel(), true);
+						return false;
+					}))
 			.map(gitHubHookDetails ->
 				gitHubTemplate.getRestTemplate().postForEntity(gitHubHookDetails.getUrl() + "/test", null, Object.class))
 			.forEach(response -> {
