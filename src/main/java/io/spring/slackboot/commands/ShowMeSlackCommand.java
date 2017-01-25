@@ -15,9 +15,6 @@
  */
 package io.spring.slackboot.commands;
 
-import java.io.IOException;
-import java.util.Arrays;
-
 import io.spring.slackboot.commands.domain.Guide;
 import io.spring.slackboot.core.SelfAwareSlackCommand;
 import io.spring.slackboot.core.domain.MessageEvent;
@@ -25,8 +22,10 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.springframework.stereotype.Component;
+
+import java.io.IOException;
+import java.util.Arrays;
 
 /**
  * @author Greg Turnquist
@@ -59,7 +58,7 @@ public class ShowMeSlackCommand extends SelfAwareSlackCommand {
 						.isPresent()
 				)
 				.forEach(guide ->
-					getSlackService().sendMessage(getToken(), "Click here to see " + guide.getName() + " -> https://spring.i" + guide.getPath(), message.getChannel(), true));
+					getSlackService().sendMessage(getToken(), "Click here to see " + guide.getName() + " -> https://spring.io" + guide.getPath(), message.getChannel(), true));
 
 			getCounterService().increment("slack.boot.executed." + this.getClass().getSimpleName());
 
