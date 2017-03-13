@@ -103,7 +103,9 @@ public class GuideCacheSlackCommand extends SelfAwareSlackCommand {
 
 		gitHubTemplate.repoOperations().getHooks("spring-guides", guide).stream()
 			.map(gitHubHook -> gitHubTemplate.getRestTemplate().getForObject(gitHubHook.getUrl(), GitHubHookDetails.class))
-			.filter(gitHubHookDetails -> gitHubHookDetails.getConfig().getUrl().contains("spring.io/webhook"))
+			.filter(gitHubHookDetails -> Optional.ofNullable(gitHubHookDetails.getConfig().getUrl())
+				.map(url -> url.contains("spring.io/webhook"))
+				.orElse(false))
 			.findAny()
 			.map(gitHubHookDetails -> Optional.of(gitHubTemplate.getRestTemplate().postForEntity(gitHubHookDetails.getUrl() + "/test", null, Object.class)))
 			.orElseGet(() -> {
