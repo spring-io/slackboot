@@ -72,12 +72,12 @@ class SlackWebSocketHandler extends TextWebSocketHandler {
 			}
 
 			Map<String, String> jsonMessage = objectMapper.readValue(message.getPayload(), Map.class);
-			log.info(jsonMessage.toString());
 			slackEventHandlers.stream()
 				.filter(slackEventHandler -> slackEventHandler.handles(jsonMessage))
 				.forEach(slackEventHandler -> slackEventHandler.handle(message.getPayload()));
 		} catch (Exception e) {
 			// Swallow all exceptions to avoid breaking the event loop.
+			e.printStackTrace();
 			log.error(e.getMessage());
 		}
 	}

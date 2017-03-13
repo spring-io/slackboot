@@ -19,6 +19,7 @@ import io.spring.slackboot.core.AbstractSlackCommand;
 import io.spring.slackboot.core.domain.MessageEvent;
 
 import org.springframework.stereotype.Component;
+import java.util.Optional;
 
 /**
  * @author Greg Turnquist
@@ -32,14 +33,16 @@ public class UpdateComingSlackCommand extends AbstractSlackCommand {
 	@Override
 	public boolean match(MessageEvent message) {
 
-		return message.getAttachments().stream()
-			.filter(attachment ->
-				attachment.getText().contains("<" + GITHUB_REPO + "/commit")
-					||
-				attachment.getText().contains("Build <" + TRAVIS_REPO)
-			)
-			.findAny()
-			.isPresent();
+		return Optional.ofNullable(message.getAttachments())
+			.map(attachments -> attachments.stream()
+				.filter(attachment ->
+					attachment.getText().contains("<" + GITHUB_REPO + "/commit")
+						||
+						attachment.getText().contains("Build <" + TRAVIS_REPO)
+				)
+				.findAny()
+				.isPresent())
+			.orElse(false);
 	}
 
 	@Override
