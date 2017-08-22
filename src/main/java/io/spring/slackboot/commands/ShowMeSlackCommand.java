@@ -15,6 +15,9 @@
  */
 package io.spring.slackboot.commands;
 
+import java.io.IOException;
+import java.util.Arrays;
+
 import io.spring.slackboot.commands.domain.Guide;
 import io.spring.slackboot.core.SelfAwareSlackCommand;
 import io.spring.slackboot.core.domain.MessageEvent;
@@ -24,9 +27,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
-import java.util.Arrays;
-
 /**
  * @author Greg Turnquist
  */
@@ -35,7 +35,7 @@ public class ShowMeSlackCommand extends SelfAwareSlackCommand {
 
 	private static final Logger log = LoggerFactory.getLogger(ShowMeSlackCommand.class);
 
-	public static final String GUIDE_CLASS = "a.guide--title";
+	private static final String GUIDE_CLASS = "a.guide--title";
 
 	@Override
 	protected boolean also(MessageEvent message) {
@@ -50,18 +50,15 @@ public class ShowMeSlackCommand extends SelfAwareSlackCommand {
 
 			doc.select(GUIDE_CLASS).stream()
 				.map(element -> element.attr("href"))
-				.map(guide -> new Guide(guide))
+				.map(Guide::new)
 				.filter(guide ->
 					Arrays.stream(message.getText().split("\\s+"))
-						.filter(token -> token.equals(guide.getName()))
-						.findAny()
-						.isPresent()
+						.anyMatch(token -> token.equals(guide.getName()))
 				)
 				.forEach(guide ->
 					getSlackService().sendMessage(getToken(), "Click here to see " + guide.getName() + " -> https://spring.io" + guide.getPath(), message.getChannel(), true));
 
 			getCounterService().increment("slack.boot.executed." + this.getClass().getSimpleName());
-
 		} catch (IOException e) {
 			log.error(e.getMessage());
 			throw new RuntimeException(e);

@@ -33,8 +33,10 @@ public interface SlackService {
 	RtmStartResponse rtmStart(@RequestParam("token") String token);
 
 	@RequestMapping(method = RequestMethod.POST, value = "/api/chat.postMessage")
-	void sendMessage(@RequestParam("token") String token, @RequestParam("text") String text,
-					@RequestParam("channel") String channel, @RequestParam("as_user") boolean asUser);
+	void sendMessage(@RequestParam("token") String token,
+					 @RequestParam("text") String text,
+					 @RequestParam("channel") String channel,
+					 @RequestParam("as_user") boolean asUser);
 
 
 }

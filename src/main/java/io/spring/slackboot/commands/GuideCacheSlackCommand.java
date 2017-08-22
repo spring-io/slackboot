@@ -15,6 +15,10 @@
  */
 package io.spring.slackboot.commands;
 
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Optional;
+
 import io.spring.slackboot.commands.domain.GitHubHookDetails;
 import io.spring.slackboot.commands.domain.Guide;
 import io.spring.slackboot.core.SelfAwareSlackCommand;
@@ -25,9 +29,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.social.github.api.impl.GitHubTemplate;
 import org.springframework.stereotype.Component;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Optional;
 
 /**
  * @author Greg Turnquist
@@ -36,11 +37,11 @@ import java.util.Optional;
 public class GuideCacheSlackCommand extends SelfAwareSlackCommand {
 
 	private static final Logger log = LoggerFactory.getLogger(GuideCacheSlackCommand.class);
+	private static final String GUIDE_CLASS = "a.guide--title";
 
 	private final GitHubTemplate gitHubTemplate;
 
 	public GuideCacheSlackCommand(GitHubTemplate gitHubTemplate) {
-
 		this.gitHubTemplate = gitHubTemplate;
 	}
 
@@ -69,11 +70,11 @@ public class GuideCacheSlackCommand extends SelfAwareSlackCommand {
 			try {
 				Document doc = Jsoup.connect("https://spring.io/guides").get();
 
-				doc.select(ListGuidesSlackCommand.GUIDE_CLASS).stream()
+				doc.select(GUIDE_CLASS).stream()
 					.map(element -> element.attr("href"))
 					.sorted()
-					.map(guide -> new Guide(guide))
-					.map(guide -> guide.getName())
+					.map(Guide::new)
+					.map(Guide::getName)
 					.forEach(guideName -> fireHook(guideName, message));
 
 				getSlackService().sendMessage(getToken(), "Done and DONE!", message.getChannel(), true);

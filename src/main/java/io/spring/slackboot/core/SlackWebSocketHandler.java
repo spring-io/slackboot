@@ -15,7 +15,12 @@
  */
 package io.spring.slackboot.core;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.Getter;
+
+import java.time.Duration;
+import java.util.List;
+import java.util.Map;
+
 import io.spring.slackboot.core.domain.SlackBootProperties;
 import io.spring.slackboot.core.handlers.SlackEventHandler;
 import org.apache.commons.lang.math.RandomUtils;
@@ -27,12 +32,10 @@ import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
-import java.time.Duration;
-import java.util.List;
-import java.util.Map;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
- * Listeng to the WebSocket and consume messages.
+ * Listen to the WebSocket and consume messages.
  *
  * @author Greg Turnquist
  */
@@ -42,17 +45,16 @@ class SlackWebSocketHandler extends TextWebSocketHandler {
 	private final static Logger log = LoggerFactory.getLogger(SlackWebSocketHandler.class);
 
 	private final ObjectMapper objectMapper;
-
 	private final SlackBootProperties slackBootProperties;
 
 	private DeadmanSwitch deadmanSwitch;
-
-	private List<SlackEventHandler> slackEventHandlers;
+	private @Getter List<SlackEventHandler> slackEventHandlers;
 
 	public SlackWebSocketHandler(ObjectMapper objectMapper,
 								 SlackBootProperties slackBootProperties,
 								 DeadmanSwitch deadmanSwitch,
 								 @Autowired(required = false) List<SlackEventHandler> slackEventHandlers) {
+
 		this.objectMapper = objectMapper;
 		this.slackBootProperties = slackBootProperties;
 		this.deadmanSwitch = deadmanSwitch;
@@ -61,6 +63,7 @@ class SlackWebSocketHandler extends TextWebSocketHandler {
 
 	@Override
 	protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
+
 		try {
 			deadmanSwitch.reset("WebSocket", Duration.ofMinutes(slackBootProperties.getDeadmanLimitMinutes()));
 
@@ -72,6 +75,7 @@ class SlackWebSocketHandler extends TextWebSocketHandler {
 			}
 
 			Map<String, String> jsonMessage = objectMapper.readValue(message.getPayload(), Map.class);
+			
 			slackEventHandlers.stream()
 				.filter(slackEventHandler -> slackEventHandler.handles(jsonMessage))
 				.forEach(slackEventHandler -> slackEventHandler.handle(message.getPayload()));
@@ -81,9 +85,4 @@ class SlackWebSocketHandler extends TextWebSocketHandler {
 			log.error(e.getMessage());
 		}
 	}
-
-	public List<SlackEventHandler> getSlackEventHandlers() {
-		return slackEventHandlers;
-	}
-
 }

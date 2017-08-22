@@ -15,8 +15,8 @@
  */
 package io.spring.slackboot.core.handlers;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.List;
+
 import io.spring.slackboot.core.SlackCommand;
 import io.spring.slackboot.core.domain.MessageEvent;
 import org.slf4j.Logger;
@@ -24,7 +24,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * @author Greg Turnquist
@@ -38,6 +39,7 @@ public class SlackMessageHandler extends SlackEventHandler<MessageEvent> {
 
 	public SlackMessageHandler(ObjectMapper objectMapper,
 							   @Autowired(required = false) List<SlackCommand> commands) {
+
 		super(objectMapper);
 		this.commands = commands;
 	}
@@ -63,6 +65,7 @@ public class SlackMessageHandler extends SlackEventHandler<MessageEvent> {
 	 */
 	@Override
 	protected void doHandle(MessageEvent message) {
+
 		log.info("Reading '" + message.getText() + "' on channel '" + message.getChannel() + "'");
 
 		commands.stream()

@@ -30,7 +30,6 @@ import org.springframework.stereotype.Component;
 public class CongratsSlackCommand extends SelfAwareSlackCommand {
 
 	private String[] compliments = new String[]{"good job", "awesome", "nice work", "thanks"};
-
 	private String[] thanks = new String []{"Thanks!", "Glad to be of help"};
 
 	private final Random random;
@@ -41,20 +40,29 @@ public class CongratsSlackCommand extends SelfAwareSlackCommand {
 
 	@Override
 	protected boolean also(MessageEvent message) {
+
 		return Arrays.stream(compliments)
-			.filter(s -> message.getText().toLowerCase().contains(s))
-			.findAny()
-			.isPresent();
+			.anyMatch(s -> message.getText().toLowerCase().contains(s));
 	}
 
 	@Override
 	public void handle(MessageEvent message) {
+		
 		if (message.getText().toLowerCase().contains("thanks")) {
 			getSlackService().sendMessage(getToken(), "You're welcome.", message.getChannel(), true);
 		} else {
-			getSlackService().sendMessage(getToken(), thanks[random.nextInt(thanks.length)], message.getChannel(), true);
+			getSlackService().sendMessage(getToken(), nextMessage(), message.getChannel(), true);
 		}
 
 		getCounterService().increment("slack.boot.executed." + this.getClass().getSimpleName());
+	}
+
+	/**
+	 * Using the {@link Random}, find the next entry in the {@literal thanks} message.
+	 * 
+	 * @return
+	 */
+	private String nextMessage() {
+		return thanks[random.nextInt(thanks.length)];
 	}
 }

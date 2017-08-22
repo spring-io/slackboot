@@ -15,10 +15,6 @@
  */
 package io.spring.slackboot.core;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
-
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
@@ -27,6 +23,10 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 
 /**
  * Service that allows scheduling shutdown tasks, in the event something doesn't report back in a suitable timeframe.
@@ -38,15 +38,8 @@ public class DeadmanSwitch {
 
 	private static final Logger log = LoggerFactory.getLogger(DeadmanSwitch.class);
 
-	private final ScheduledExecutorService scheduledExecutorService;
-
-	private final Map<String, ScheduledFuture<?>> switches;
-
-	public DeadmanSwitch() {
-
-		this.scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
-		this.switches = new HashMap<>();
-	}
+	private final ScheduledExecutorService scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
+	private final Map<String, ScheduledFuture<?>> switches = new HashMap<>();
 
 	public void reset(String context, Duration duration) {
 

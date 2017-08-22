@@ -15,6 +15,11 @@
  */
 package io.spring.slackboot.commands;
 
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import io.spring.slackboot.commands.domain.Guide;
 import io.spring.slackboot.core.SelfAwareSlackCommand;
 import io.spring.slackboot.core.domain.MessageEvent;
@@ -25,11 +30,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.stream.Collectors;
-
 /**
  * @author Greg Turnquist
  */
@@ -38,8 +38,8 @@ public class ListGuidesSlackCommand extends SelfAwareSlackCommand {
 
 	private static final Logger log = LoggerFactory.getLogger(ListGuidesSlackCommand.class);
 
-	public static final String GUIDE_CLASS = "a.guide--title";
-
+	private static final String GUIDE_CLASS = "a.guide--title";
+	
 	private final MustacheTemplateService mustacheTemplateService;
 
 	public ListGuidesSlackCommand(MustacheTemplateService mustacheTemplateService) {
@@ -60,7 +60,7 @@ public class ListGuidesSlackCommand extends SelfAwareSlackCommand {
 			List<Guide> guides = doc.select(GUIDE_CLASS).stream()
 				.map(element -> element.attr("href"))
 				.sorted()
-				.map(guide -> new Guide(guide))
+				.map(Guide::new)
 				.collect(Collectors.toList());
 
 			HashMap<String, Object> model = new HashMap<>();

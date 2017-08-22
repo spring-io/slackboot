@@ -15,11 +15,11 @@
  */
 package io.spring.slackboot.commands;
 
+import java.util.Optional;
+
 import io.spring.slackboot.core.AbstractSlackCommand;
 import io.spring.slackboot.core.domain.MessageEvent;
-
 import org.springframework.stereotype.Component;
-import java.util.Optional;
 
 /**
  * @author Greg Turnquist
@@ -35,19 +35,18 @@ public class UpdateComingSlackCommand extends AbstractSlackCommand {
 
 		return Optional.ofNullable(message.getAttachments())
 			.map(attachments -> attachments.stream()
-				.filter(attachment ->
+				.anyMatch(attachment ->
 					attachment.getText().contains("<" + GITHUB_REPO + "/commit")
-						||
-						attachment.getText().contains("Build <" + TRAVIS_REPO)
-				)
-				.findAny()
-				.isPresent())
+					||
+					attachment.getText().contains("Build <" + TRAVIS_REPO)
+				))
 			.orElse(false);
 	}
 
 	@Override
 	public void handle(MessageEvent message) {
 
+		// New Github commit?
 		message.getAttachments().stream()
 			.filter(attachment -> attachment.getText().contains("<" + GITHUB_REPO + "/commit"))
 			.findAny()
@@ -55,6 +54,7 @@ public class UpdateComingSlackCommand extends AbstractSlackCommand {
 				getSlackService().sendMessage(getToken(), "Ooh! Has someone made a change?", message.getChannel(), true);
 			});
 
+		// New Travis build?
 		message.getAttachments().stream()
 			.filter(attachment ->
 				attachment.getText().contains("Build <" + TRAVIS_REPO + "/builds")
@@ -66,6 +66,7 @@ public class UpdateComingSlackCommand extends AbstractSlackCommand {
 				getSlackService().sendMessage(getToken(), "Yipee! Looks like a new upgrade for me.", message.getChannel(), true);
 			});
 
+		// Failing Travis build?
 		message.getAttachments().stream()
 			.filter(attachment ->
 				attachment.getText().contains("Build <" + TRAVIS_REPO + "/builds")
@@ -74,7 +75,7 @@ public class UpdateComingSlackCommand extends AbstractSlackCommand {
 			)
 			.findAny()
 			.ifPresent(attachment -> {
-				getSlackService().sendMessage(getToken(), ":cry: Sorry that build job failed.", message.getChannel(), true);
+				getSlackService().sendMessage(getToken(), ":cry: Sorry your build job failed.", message.getChannel(), true);
 			});
 
 	}

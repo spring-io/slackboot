@@ -15,6 +15,8 @@
  */
 package io.spring.slackboot.core;
 
+import lombok.Getter;
+
 import io.spring.slackboot.core.domain.SlackBootProperties;
 import io.spring.slackboot.core.services.SlackService;
 
@@ -32,12 +34,9 @@ import org.springframework.boot.actuate.metrics.CounterService;
  */
 public abstract class AbstractSlackCommand implements SlackCommand, BeanFactoryAware, InitializingBean {
 
-	private SlackService slackService;
-
-	private SlackBootProperties slackBootProperties;
-
-	private CounterService counterService;
-
+	private @Getter SlackService slackService;
+	private @Getter SlackBootProperties slackBootProperties;
+	private @Getter CounterService counterService;
 	private BeanFactory beanFactory;
 
 	@Override
@@ -54,38 +53,11 @@ public abstract class AbstractSlackCommand implements SlackCommand, BeanFactoryA
 	}
 
 	/**
-	 * This is the service needed to post messages to Slack.
-	 *
-	 * @return
-	 */
-	public SlackService getSlackService() {
-		return slackService;
-	}
-
-	/**
-	 * Quick access to any configuration properties.
-	 *
-	 * @return
-	 */
-	public SlackBootProperties getSlackBootProperties() {
-		return slackBootProperties;
-	}
-
-	/**
 	 * Shortcut to the oauth token, allowing other commands to be invoked.
 	 *
 	 * @return
 	 */
 	public String getToken() {
 		return slackBootProperties.getToken();
-	}
-
-	/**
-	 * Quick access to {@link CounterService}, so commands can tabulate metrics.
-	 *
-	 * @return
-	 */
-	public CounterService getCounterService() {
-		return counterService;
 	}
 }

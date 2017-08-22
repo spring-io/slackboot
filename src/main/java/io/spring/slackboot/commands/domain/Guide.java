@@ -32,6 +32,7 @@ public class Guide {
 	}
 
 	public String getName() {
+
 		switch (getType()) {
 			case "guide":
 				return path.replace("/guides", "").replace("/gs/", "gs-").replace("/", "");
@@ -45,6 +46,7 @@ public class Guide {
 	}
 
 	public String getType() {
+
 		if (path.contains("/gs")) {
 			return "guide";
 		} else if (path.contains("/topicals")) {

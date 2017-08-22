@@ -15,14 +15,15 @@
  */
 package io.spring.slackboot.core.handlers;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
 import java.util.Map;
 import java.util.Optional;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * @author Greg Turnquist
@@ -60,12 +61,13 @@ public abstract class SlackEventHandler<T> {
 	}
 
 	/**
-	 * Transform the message into a Optional, strongly typed message.
+	 * Transform the message into an {@link Optional}, strongly typed message.
 	 *
 	 * @param message
 	 * @return
 	 */
 	protected Optional<T> convert(String message) {
+		
 		try {
 			return Optional.of(objectMapper.readValue(message, type()));
 		} catch (IOException e) {

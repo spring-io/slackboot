@@ -43,6 +43,7 @@ public abstract class SelfAwareSlackCommand extends AbstractSlackCommand impleme
 	 */
 	@Override
 	public void onApplicationEvent(BotLoggedInEvent event) {
+
 		log.info(event.getSelf().getName() + " is now logged in for " + getClass().getSimpleName() + ".");
 		this.self = event.getSelf();
 	}
@@ -75,8 +76,4 @@ public abstract class SelfAwareSlackCommand extends AbstractSlackCommand impleme
 	 * @return
 	 */
 	protected abstract boolean also(MessageEvent message);
-
-	public Self getSelf() {
-		return self;
-	}
 }

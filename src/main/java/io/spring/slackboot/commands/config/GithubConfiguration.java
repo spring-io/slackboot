@@ -16,7 +16,6 @@
 package io.spring.slackboot.commands.config;
 
 import io.spring.slackboot.core.domain.SlackBootProperties;
-
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.social.github.api.impl.GitHubTemplate;

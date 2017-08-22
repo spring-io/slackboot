@@ -15,13 +15,14 @@
  */
 package io.spring.slackboot.core.services;
 
-import com.samskivert.mustache.Mustache;
+import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.mustache.MustacheResourceTemplateLoader;
 import org.springframework.stereotype.Service;
 
-import java.util.Map;
+import com.samskivert.mustache.Mustache;
 
 /**
  * @author Greg Turnquist
@@ -32,10 +33,10 @@ public class MustacheTemplateService {
 	private static final Logger log = LoggerFactory.getLogger(MustacheTemplateService.class);
 
 	private final MustacheResourceTemplateLoader mustacheResourceTemplateLoader;
-
 	private final Mustache.Compiler compiler;
 
 	public MustacheTemplateService(MustacheResourceTemplateLoader mustacheResourceTemplateLoader, Mustache.Compiler compiler) {
+
 		this.mustacheResourceTemplateLoader = mustacheResourceTemplateLoader;
 		this.compiler = compiler;
 	}
