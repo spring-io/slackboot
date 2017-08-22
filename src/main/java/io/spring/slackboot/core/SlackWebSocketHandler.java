@@ -32,6 +32,7 @@ import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
@@ -74,7 +75,8 @@ class SlackWebSocketHandler extends TextWebSocketHandler {
 				}
 			}
 
-			Map<String, String> jsonMessage = objectMapper.readValue(message.getPayload(), Map.class);
+			Map<String, String> jsonMessage = objectMapper.readValue(message.getPayload(),
+				new TypeReference<Map<String, String>>() {});
 			
 			slackEventHandlers.stream()
 				.filter(slackEventHandler -> slackEventHandler.handles(jsonMessage))
