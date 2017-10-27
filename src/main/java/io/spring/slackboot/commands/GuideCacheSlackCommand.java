@@ -27,6 +27,9 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.social.github.api.GitHubHook;
 import org.springframework.social.github.api.impl.GitHubTemplate;
 import org.springframework.stereotype.Component;
 
@@ -103,25 +106,49 @@ public class GuideCacheSlackCommand extends SelfAwareSlackCommand {
 	private void fireHook(String guide, MessageEvent message) {
 
 		gitHubTemplate.repoOperations().getHooks("spring-guides", guide).stream()
-			.map(gitHubHook -> gitHubTemplate.getRestTemplate().getForObject(gitHubHook.getUrl(), GitHubHookDetails.class))
-			.filter(gitHubHookDetails -> Optional.ofNullable(gitHubHookDetails.getConfig().getUrl())
-				.map(url -> url.contains("spring.io/webhook"))
-				.orElse(false))
+			.map(this::toGithubHookDetails)
+			.filter(this::hasSpringIoWebHook)
 			.findAny()
-			.map(gitHubHookDetails -> Optional.of(gitHubTemplate.getRestTemplate().postForEntity(gitHubHookDetails.getUrl() + "/test", null, Object.class)))
+			.map(this::fireSpringIoWebHook)
 			.orElseGet(() -> {
 				getSlackService().sendMessage(getToken(), "Hmm. Looks like you don't have a webhook yet. See https://github.com/spring-guides/getting-started-guides/wiki/Create-a-Repository for help.", message.getChannel(), true);
 				return Optional.empty();
 			})
-			.ifPresent(response -> {
-				if (response.getStatusCodeValue() < 300) {
-					getSlackService().sendMessage(getToken(), guide + " has been cleared.", message.getChannel(), true);
-					getCounterService().increment("slack.boot.guides.cacheCleared.successful");
-				} else {
-					getSlackService().sendMessage(getToken(),
-						"Wow. Something went wrong with " + guide + ", " + response.toString(), message.getChannel(), true);
-					getCounterService().increment("slack.boot.guides.cacheCleared.failure");
-				}
-			});
+			.ifPresent(response -> handleResponse(response, guide, message));
+	}
+
+	private GitHubHookDetails toGithubHookDetails(GitHubHook gitHubHook) {
+		return gitHubTemplate.getRestTemplate().getForObject(gitHubHook.getUrl(), GitHubHookDetails.class);
+	}
+
+	private boolean hasSpringIoWebHook(GitHubHookDetails gitHubHookDetails) {
+
+		return Optional.ofNullable(gitHubHookDetails.getConfig().getUrl())
+				.map(url -> url.contains("spring.io/webhook"))
+				.orElse(false);
+	}
+
+	/**
+	 * Per GitHub API documentation, appending "/test" onto the hook's URL forms the URL to "test" it.
+	 * 
+	 * @see https://developer.github.com/v3/repos/hooks/#get-single-hook
+	 * @param gitHubHookDetails
+	 * @return
+	 */
+	private Optional<ResponseEntity<?>> fireSpringIoWebHook(GitHubHookDetails gitHubHookDetails) {
+		return Optional.of(gitHubTemplate.getRestTemplate().postForEntity(gitHubHookDetails.getUrl() + "/test", null, Object.class));
+	}
+
+	private void handleResponse(ResponseEntity<?> response, String guide, MessageEvent message) {
+		
+		if (response.getStatusCodeValue() < 300) {
+			getSlackService().sendMessage(getToken(), guide + " has been cleared.", message.getChannel(), true);
+			getCounterService().increment("slack.boot.guides.cacheCleared.successful");
+		} else {
+			getSlackService().sendMessage(getToken(),
+					"Wow. Something went wrong with " + guide + ", " + response.toString(), message.getChannel(), true);
+			getCounterService().increment("slack.boot.guides.cacheCleared.failure");
+		}
+
 	}
 }
