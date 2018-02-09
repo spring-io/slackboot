@@ -44,9 +44,9 @@ public abstract class SlackEventHandler<T> {
 	 * @param jsonMessage
 	 * @return
 	 */
-	public boolean handles(Map<String, String> jsonMessage) {
+	public boolean handles(Map<String, Object> jsonMessage) {
 
-		return Optional.ofNullable(jsonMessage.get("type"))
+		return Optional.ofNullable(jsonMessage.get("type").toString())
 			.map(this::doesHandle)
 			.orElseThrow(() -> new IllegalStateException("All Slack messages must have 'type'"));
 	}
