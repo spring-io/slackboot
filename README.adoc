@@ -1,5 +1,5 @@
 image:https://travis-ci.com/spring-io/slackboot.svg?token=W7aHg1sSsP4krxEgwMRV&branch=master["Build Status", link="https://travis-ci.com/spring-io/slackboot"]
 
-This bot is used to help manage the guides and tutorials at http://spring.io/guides.
+This bot is used to help manage the guides and tutorials at https://spring.io/guides.
 
 This bot is also a nice demo app for building Slack bots.
