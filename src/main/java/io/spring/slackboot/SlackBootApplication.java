@@ -31,7 +31,8 @@ public class SlackBootApplication {
 		SpringApplication.run(SlackBootApplication.class, args);
 	}
 
-	@Bean Self self() {
+	@Bean
+	Self self() {
 		return new Self();
 	}
 
