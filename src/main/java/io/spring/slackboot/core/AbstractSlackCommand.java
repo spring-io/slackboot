@@ -15,49 +15,69 @@
  */
 package io.spring.slackboot.core;
 
-import lombok.Getter;
+import java.util.Objects;
 
 import io.spring.slackboot.core.domain.SlackBootProperties;
 import io.spring.slackboot.core.services.SlackService;
-
-import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.BeanFactory;
-import org.springframework.beans.factory.BeanFactoryAware;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.boot.actuate.metrics.CounterService;
 
 /**
- * Convenience base class for {@link SlackCommand}s. That way, commands don't have to inject these
- * commonly used things in every single command.
+ * Convenience base class for {@link SlackCommand}s. That way, commands don't have to inject these commonly used things
+ * in every single command.
  *
  * @author Greg Turnquist
  */
-public abstract class AbstractSlackCommand implements SlackCommand, BeanFactoryAware, InitializingBean {
+public abstract class AbstractSlackCommand implements SlackCommand {
 
-	private @Getter SlackService slackService;
-	private @Getter SlackBootProperties slackBootProperties;
-	private @Getter CounterService counterService;
-	private BeanFactory beanFactory;
+	private SlackService slackService;
+	private SlackBootProperties slackBootProperties;
+	private CounterService counterService;
 
-	@Override
-	public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
-		this.beanFactory = beanFactory;
+	public AbstractSlackCommand(SlackService slackService, SlackBootProperties slackBootProperties,
+			CounterService counterService) {
+
+		this.slackService = slackService;
+		this.slackBootProperties = slackBootProperties;
+		this.counterService = counterService;
 	}
 
-	@Override
-	public void afterPropertiesSet() throws Exception {
-
-		this.slackService = beanFactory.getBean(SlackService.class);
-		this.slackBootProperties = beanFactory.getBean(SlackBootProperties.class);
-		this.counterService = beanFactory.getBean(CounterService.class);
+	public SlackService getSlackService() {
+		return slackService;
 	}
 
-	/**
-	 * Shortcut to the oauth token, allowing other commands to be invoked.
-	 *
-	 * @return
-	 */
+	public SlackBootProperties getSlackBootProperties() {
+		return slackBootProperties;
+	}
+
+	public CounterService getCounterService() {
+		return counterService;
+	}
+
 	public String getToken() {
-		return slackBootProperties.getToken();
+		return this.slackBootProperties.getToken();
+	}
+
+	@Override
+	public boolean equals(Object o) {
+
+		if (this == o)
+			return true;
+		if (o == null || getClass() != o.getClass())
+			return false;
+		AbstractSlackCommand that = (AbstractSlackCommand) o;
+		return Objects.equals(slackService, that.slackService)
+				&& Objects.equals(slackBootProperties, that.slackBootProperties)
+				&& Objects.equals(counterService, that.counterService);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(slackService, slackBootProperties, counterService);
+	}
+
+	@Override
+	public String toString() {
+		return "AbstractSlackCommand{" + "slackService=" + slackService + ", slackBootProperties=" + slackBootProperties
+				+ ", counterService=" + counterService + '}';
 	}
 }

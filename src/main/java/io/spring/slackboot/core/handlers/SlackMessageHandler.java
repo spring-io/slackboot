@@ -37,8 +37,7 @@ public class SlackMessageHandler extends SlackEventHandler<MessageEvent> {
 
 	private final List<SlackCommand> commands;
 
-	public SlackMessageHandler(ObjectMapper objectMapper,
-							   @Autowired(required = false) List<SlackCommand> commands) {
+	public SlackMessageHandler(ObjectMapper objectMapper, @Autowired(required = false) List<SlackCommand> commands) {
 
 		super(objectMapper);
 		this.commands = commands;
@@ -55,11 +54,9 @@ public class SlackMessageHandler extends SlackEventHandler<MessageEvent> {
 		return type.equals("message");
 	}
 
-
 	/**
-	 * Handle the message by visiting each {@link SlackCommand}, looking for a match, and handing it over.
-	 *
-	 * NOTE: ALL commands that match will get to read it.
+	 * Handle the message by visiting each {@link SlackCommand}, looking for a match, and handing it over. NOTE: ALL
+	 * commands that match will get to read it.
 	 *
 	 * @param message
 	 */
@@ -68,9 +65,9 @@ public class SlackMessageHandler extends SlackEventHandler<MessageEvent> {
 
 		log.info("Reading '" + message.getText() + "' on channel '" + message.getChannel() + "'");
 
-		commands.stream()
-			.filter(slackCommand -> slackCommand.match(message))
-			.forEach(slackCommand -> slackCommand.handle(message));
+		commands.stream() //
+				.filter(slackCommand -> slackCommand.match(message)) //
+				.forEach(slackCommand -> slackCommand.handle(message));
 	}
 
 	/**

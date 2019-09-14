@@ -46,9 +46,9 @@ public abstract class SlackEventHandler<T> {
 	 */
 	public boolean handles(Map<String, Object> jsonMessage) {
 
-		return Optional.ofNullable(jsonMessage.get("type").toString())
-			.map(this::doesHandle)
-			.orElseThrow(() -> new IllegalStateException("All Slack messages must have 'type'"));
+		return Optional.ofNullable(jsonMessage.get("type").toString()) //
+				.map(this::doesHandle) //
+				.orElseThrow(() -> new IllegalStateException("All Slack messages must have 'type'"));
 	}
 
 	/**
@@ -67,7 +67,7 @@ public abstract class SlackEventHandler<T> {
 	 * @return
 	 */
 	protected Optional<T> convert(String message) {
-		
+
 		try {
 			return Optional.of(objectMapper.readValue(message, type()));
 		} catch (IOException e) {

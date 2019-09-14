@@ -15,18 +15,22 @@
  */
 package io.spring.slackboot.core;
 
+import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.BDDAssertions.*;
+
 import io.spring.slackboot.core.domain.BotLoggedInEvent;
 import io.spring.slackboot.core.domain.MessageEvent;
 import io.spring.slackboot.core.domain.Self;
+import io.spring.slackboot.core.domain.SlackBootProperties;
+import io.spring.slackboot.core.services.SlackService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.boot.actuate.metrics.CounterService;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.junit4.SpringRunner;
-
-import static org.assertj.core.api.Assertions.tuple;
-import static org.assertj.core.api.BDDAssertions.*;
 
 /**
  * @author Greg Turnquist
@@ -37,10 +41,22 @@ public class SelfAwareSlackCommandTests {
 
 	SelfAwareSlackCommand selfAwareSlackCommand;
 
+	@MockBean
+	SlackService slackService;
+
+	@MockBean
+	SlackBootProperties slackBootProperties;
+
+	@MockBean
+	CounterService counterService;
+
+	@MockBean
+	Self self;
+
 	@Before
 	public void setUp() {
 
-		this.selfAwareSlackCommand = new SelfAwareSlackCommand() {
+		this.selfAwareSlackCommand = new SelfAwareSlackCommand(slackService, slackBootProperties, counterService, self) {
 			@Override
 			protected boolean also(MessageEvent message) {
 				return message.getText().contains("should respond");

@@ -15,7 +15,15 @@
  */
 package io.spring.slackboot.core;
 
+import io.spring.slackboot.core.domain.BotLoggedInEvent;
+import io.spring.slackboot.core.domain.RtmStartResponse;
+import io.spring.slackboot.core.domain.SlackBootProperties;
+import io.spring.slackboot.core.services.SlackService;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
 import org.springframework.context.ApplicationListener;
@@ -24,22 +32,17 @@ import org.springframework.web.socket.client.WebSocketClient;
 import org.springframework.web.socket.client.WebSocketConnectionManager;
 import org.springframework.web.socket.client.standard.StandardWebSocketClient;
 
-import io.spring.slackboot.core.domain.BotLoggedInEvent;
-import io.spring.slackboot.core.domain.RtmStartResponse;
-import io.spring.slackboot.core.domain.SlackBootProperties;
-import io.spring.slackboot.core.services.SlackService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
- * Essentially, when the app is up, programmatically open the WebSocket connection to Slack's RTM service.
- * Then publish an event containing the bot's details for all interested parties, and then turn it over to
+ * Essentially, when the app is up, programmatically open the WebSocket connection to Slack's RTM service. Then publish
+ * an event containing the bot's details for all interested parties, and then turn it over to
  * {@link SlackWebSocketHandler}.
  *
  * @author Greg Turnquist
  */
 @Component
-public class SlackBootInitializer implements ApplicationListener<ApplicationReadyEvent>, ApplicationEventPublisherAware {
+@EnableConfigurationProperties
+public class SlackBootInitializer
+		implements ApplicationListener<ApplicationReadyEvent>, ApplicationEventPublisherAware {
 
 	private final static Logger log = LoggerFactory.getLogger(SlackBootInitializer.class);
 
@@ -50,14 +53,13 @@ public class SlackBootInitializer implements ApplicationListener<ApplicationRead
 
 	private ApplicationEventPublisher applicationEventPublisher;
 
-	public SlackBootInitializer(SlackService slackService,
-								SlackBootProperties slackBootProperties,
-								SlackWebSocketHandler slackWebSocketHandler) {
+	public SlackBootInitializer(SlackService slackService, SlackBootProperties slackBootProperties,
+			SlackWebSocketHandler slackWebSocketHandler) {
 
 		this.slackService = slackService;
 		this.slackBootProperties = slackBootProperties;
 		this.slackWebSocketHandler = slackWebSocketHandler;
-		this.webSocketClient = 	new StandardWebSocketClient();
+		this.webSocketClient = new StandardWebSocketClient();
 	}
 
 	@Override
@@ -66,8 +68,8 @@ public class SlackBootInitializer implements ApplicationListener<ApplicationRead
 	}
 
 	/**
-	 * After finding out that the app is ready, subscribe to Slack's RTM API and await a websocket URL.
-	 * Then hook up a custom websocket listener.
+	 * After finding out that the app is ready, subscribe to Slack's RTM API and await a websocket URL. Then hook up a
+	 * custom websocket listener.
 	 *
 	 * @param applicationReadyEvent
 	 */
@@ -78,16 +80,18 @@ public class SlackBootInitializer implements ApplicationListener<ApplicationRead
 
 		if (response.isOk()) {
 
-			log.info("My name is " + response.getSelf().getName() + " (<@" + response.getSelf().getId() + ">) and I'm listening on " + response.getUrl());
+			log.info("My name is " + response.getSelf().getName() + " (<@" + response.getSelf().getId()
+					+ ">) and I'm listening on " + response.getUrl());
 			this.applicationEventPublisher.publishEvent(new BotLoggedInEvent(response.getSelf()));
 
-			WebSocketConnectionManager webSocketConnectionManager = new WebSocketConnectionManager(
-				webSocketClient, slackWebSocketHandler, response.getUrl());
+			WebSocketConnectionManager webSocketConnectionManager = new WebSocketConnectionManager(webSocketClient,
+					slackWebSocketHandler, response.getUrl());
 
 			webSocketConnectionManager.start();
 		} else {
 
 			log.error("Connection not ok!");
+			throw new IllegalStateException("Connection not ok! Have you checked if your tokens are still good?");
 		}
 	}
 }

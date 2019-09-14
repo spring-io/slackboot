@@ -35,7 +35,8 @@ public class MustacheTemplateService {
 	private final MustacheResourceTemplateLoader mustacheResourceTemplateLoader;
 	private final Mustache.Compiler compiler;
 
-	public MustacheTemplateService(MustacheResourceTemplateLoader mustacheResourceTemplateLoader, Mustache.Compiler compiler) {
+	public MustacheTemplateService(MustacheResourceTemplateLoader mustacheResourceTemplateLoader,
+			Mustache.Compiler compiler) {
 
 		this.mustacheResourceTemplateLoader = mustacheResourceTemplateLoader;
 		this.compiler = compiler;
@@ -44,8 +45,7 @@ public class MustacheTemplateService {
 	public String processTemplateIntoString(String templateName, Map model) {
 
 		try {
-			String content = compiler.compile(
-				mustacheResourceTemplateLoader.getTemplate(templateName)).execute(model);
+			String content = compiler.compile(mustacheResourceTemplateLoader.getTemplate(templateName)).execute(model);
 			return content;
 		} catch (Exception e) {
 			e.printStackTrace();

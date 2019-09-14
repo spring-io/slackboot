@@ -18,8 +18,8 @@ package io.spring.slackboot.core.domain;
 import org.springframework.context.ApplicationEvent;
 
 /**
- * When the WebSocket to Slack's RTM interface is successfully opened, transmit this {@link ApplicationEvent}
- * to all interested parties, including the {@link Self} details about the bot.
+ * When the WebSocket to Slack's RTM interface is successfully opened, transmit this {@link ApplicationEvent} to all
+ * interested parties, including the {@link Self} details about the bot.
  *
  * @author Greg Turnquist
  */

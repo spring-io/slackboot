@@ -15,16 +15,14 @@
  */
 package io.spring.slackboot.core.domain;
 
-import lombok.Data;
-
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Message sent over a Slack channel.
  *
  * @author Greg Turnquist
  */
-@Data
 public class MessageEvent {
 
 	private String type;
@@ -32,4 +30,68 @@ public class MessageEvent {
 	private String user;
 	private String text;
 	private List<Attachment> attachments;
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
+	public String getChannel() {
+		return channel;
+	}
+
+	public void setChannel(String channel) {
+		this.channel = channel;
+	}
+
+	public String getUser() {
+		return user;
+	}
+
+	public void setUser(String user) {
+		this.user = user;
+	}
+
+	public String getText() {
+		return text;
+	}
+
+	public void setText(String text) {
+		this.text = text;
+	}
+
+	public List<Attachment> getAttachments() {
+		return attachments;
+	}
+
+	public void setAttachments(List<Attachment> attachments) {
+		this.attachments = attachments;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+
+		if (this == o)
+			return true;
+		if (o == null || getClass() != o.getClass())
+			return false;
+		MessageEvent that = (MessageEvent) o;
+		return Objects.equals(type, that.type) && Objects.equals(channel, that.channel) && Objects.equals(user, that.user)
+				&& Objects.equals(text, that.text) && Objects.equals(attachments, that.attachments);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(type, channel, user, text, attachments);
+	}
+
+	@Override
+	public String toString() {
+
+		return "MessageEvent{" + "type='" + type + '\'' + ", channel='" + channel + '\'' + ", user='" + user + '\''
+				+ ", text='" + text + '\'' + ", attachments=" + attachments + '}';
+	}
 }

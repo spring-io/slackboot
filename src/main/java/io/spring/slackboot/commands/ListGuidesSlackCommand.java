@@ -23,11 +23,15 @@ import java.util.stream.Collectors;
 import io.spring.slackboot.commands.domain.Guide;
 import io.spring.slackboot.core.SelfAwareSlackCommand;
 import io.spring.slackboot.core.domain.MessageEvent;
+import io.spring.slackboot.core.domain.Self;
+import io.spring.slackboot.core.domain.SlackBootProperties;
 import io.spring.slackboot.core.services.MustacheTemplateService;
+import io.spring.slackboot.core.services.SlackService;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.actuate.metrics.CounterService;
 import org.springframework.stereotype.Component;
 
 /**
@@ -39,10 +43,13 @@ public class ListGuidesSlackCommand extends SelfAwareSlackCommand {
 	private static final Logger log = LoggerFactory.getLogger(ListGuidesSlackCommand.class);
 
 	private static final String GUIDE_CLASS = "a.guide--title";
-	
+
 	private final MustacheTemplateService mustacheTemplateService;
 
-	public ListGuidesSlackCommand(MustacheTemplateService mustacheTemplateService) {
+	public ListGuidesSlackCommand(SlackService slackService, SlackBootProperties slackBootProperties,
+			CounterService counterService, Self self, MustacheTemplateService mustacheTemplateService) {
+
+		super(slackService, slackBootProperties, counterService, self);
 		this.mustacheTemplateService = mustacheTemplateService;
 	}
 
@@ -57,16 +64,14 @@ public class ListGuidesSlackCommand extends SelfAwareSlackCommand {
 		try {
 			Document doc = Jsoup.connect("https://spring.io/guides").get();
 
-			List<Guide> guides = doc.select(GUIDE_CLASS).stream()
-				.map(element -> element.attr("href"))
-				.sorted()
-				.map(Guide::new)
-				.collect(Collectors.toList());
+			List<Guide> guides = doc.select(GUIDE_CLASS).stream().map(element -> element.attr("href")).sorted()
+					.map(Guide::new).collect(Collectors.toList());
 
 			HashMap<String, Object> model = new HashMap<>();
 			model.put("guides", guides);
 			model.put("site", "https://spring.io");
-			String helpMessage = mustacheTemplateService.processTemplateIntoString(this.getClass().getSimpleName() + "-message", model);
+			String helpMessage = mustacheTemplateService
+					.processTemplateIntoString(this.getClass().getSimpleName() + "-message", model);
 
 			getSlackService().sendMessage(getToken(), helpMessage, message.getChannel(), true);
 

@@ -15,22 +15,61 @@
  */
 package io.spring.slackboot.core.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import java.util.Objects;
 
 /**
- * Captures Slack bot's {@code id} and {@code name}. Avoids hardcoding the name of the bot, allowing
- * commands to "@" the bot dynamically.
+ * Captures Slack bot's {@code id} and {@code name}. Avoids hardcoding the name of the bot, allowing commands to "@" the
+ * bot dynamically.
  *
  * @author Greg Turnquist
  */
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class Self {
 
 	private String id;
 	private String name;
 
+	public Self() {}
+
+	public Self(String id, String name) {
+
+		this.id = id;
+		this.name = name;
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+
+		if (this == o)
+			return true;
+		if (o == null || getClass() != o.getClass())
+			return false;
+		Self self = (Self) o;
+		return Objects.equals(id, self.id) && Objects.equals(name, self.name);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(id, name);
+	}
+
+	@Override
+	public String toString() {
+		return "Self{" + "id='" + id + '\'' + ", name='" + name + '\'' + '}';
+	}
 }

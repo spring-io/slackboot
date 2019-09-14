@@ -18,26 +18,36 @@ package io.spring.slackboot.core;
 import io.spring.slackboot.core.domain.BotLoggedInEvent;
 import io.spring.slackboot.core.domain.MessageEvent;
 import io.spring.slackboot.core.domain.Self;
+
+import io.spring.slackboot.core.domain.SlackBootProperties;
+import io.spring.slackboot.core.services.SlackService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
+import org.springframework.boot.actuate.metrics.CounterService;
 import org.springframework.context.ApplicationListener;
 
 /**
- * Base class to implement a {@link SlackCommand} that only responds to "@slackboot blah blah", i.e. calling the
- * bot out.
+ * Base class to implement a {@link SlackCommand} that only responds to "@slackboot blah blah", i.e. calling the bot
+ * out.
  *
  * @author Greg Turnquist
  */
-public abstract class SelfAwareSlackCommand extends AbstractSlackCommand implements ApplicationListener<BotLoggedInEvent> {
+public abstract class SelfAwareSlackCommand extends AbstractSlackCommand
+		implements ApplicationListener<BotLoggedInEvent> {
 
 	private static final Logger log = LoggerFactory.getLogger(SelfAwareSlackCommand.class);
 
 	private Self self;
 
+	public SelfAwareSlackCommand(SlackService slackService, SlackBootProperties slackBootProperties, CounterService counterService, Self self) {
+		
+		super(slackService, slackBootProperties, counterService);
+		this.self = self;
+	}
+
 	/**
-	 * Listen for the {@link BotLoggedInEvent} and capture {@link Self}, so it knows the current name of the
-	 * bot to listen for.
+	 * Listen for the {@link BotLoggedInEvent} and capture {@link Self}, so it knows the current name of the bot to listen
+	 * for.
 	 *
 	 * @param event
 	 */

@@ -15,18 +15,62 @@
  */
 package io.spring.slackboot.core.domain;
 
-import lombok.Data;
+import java.util.Objects;
 
 /**
  * Some Slack messages put extra information in {@link Attachment}s.
  *
  * @author Greg Turnquist
  */
-@Data
 public class Attachment {
 
 	private String fallback;
 	private String text;
 	private String pretext;
 
+	public String getFallback() {
+		return fallback;
+	}
+
+	public void setFallback(String fallback) {
+		this.fallback = fallback;
+	}
+
+	public String getText() {
+		return text;
+	}
+
+	public void setText(String text) {
+		this.text = text;
+	}
+
+	public String getPretext() {
+		return pretext;
+	}
+
+	public void setPretext(String pretext) {
+		this.pretext = pretext;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+		if (o == null || getClass() != o.getClass())
+			return false;
+		Attachment that = (Attachment) o;
+		return Objects.equals(fallback, that.fallback) && Objects.equals(text, that.text)
+				&& Objects.equals(pretext, that.pretext);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(fallback, text, pretext);
+	}
+
+	@Override
+	public String toString() {
+		return "Attachment{" + "fallback='" + fallback + '\'' + ", text='" + text + '\'' + ", pretext='" + pretext + '\''
+				+ '}';
+	}
 }

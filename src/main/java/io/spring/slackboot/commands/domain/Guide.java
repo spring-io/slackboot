@@ -15,17 +15,18 @@
  */
 package io.spring.slackboot.commands.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import java.util.Objects;
 
 /**
  * @author Greg Turnquist
  */
-@Data
-@AllArgsConstructor
 public class Guide {
 
 	private String path;
+
+	public Guide(String path) {
+		this.path = path;
+	}
 
 	public String getPath() {
 		return this.path;
@@ -56,5 +57,26 @@ public class Guide {
 		} else {
 			return "unknown";
 		}
+	}
+
+	@Override
+	public boolean equals(Object o) {
+
+		if (this == o)
+			return true;
+		if (o == null || getClass() != o.getClass())
+			return false;
+		Guide guide = (Guide) o;
+		return Objects.equals(path, guide.path);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(path);
+	}
+
+	@Override
+	public String toString() {
+		return "Guide{" + "path='" + path + '\'' + '}';
 	}
 }

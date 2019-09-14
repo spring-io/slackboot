@@ -15,20 +15,24 @@
  */
 package io.spring.slackboot.commands;
 
-import io.spring.slackboot.core.SelfAwareSlackCommand;
-import io.spring.slackboot.core.SlackCommand;
-import io.spring.slackboot.core.domain.MessageEvent;
-import io.spring.slackboot.core.services.MustacheTemplateService;
-import org.springframework.beans.BeansException;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
-import org.springframework.stereotype.Component;
-
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import io.spring.slackboot.core.SelfAwareSlackCommand;
+import io.spring.slackboot.core.SlackCommand;
+import io.spring.slackboot.core.domain.MessageEvent;
+import io.spring.slackboot.core.domain.Self;
+import io.spring.slackboot.core.domain.SlackBootProperties;
+import io.spring.slackboot.core.services.MustacheTemplateService;
+import io.spring.slackboot.core.services.SlackService;
+import org.springframework.beans.BeansException;
+import org.springframework.boot.actuate.metrics.CounterService;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.stereotype.Component;
 
 /**
  * @author Greg Turnquist
@@ -40,7 +44,10 @@ public class HelpSlackCommand extends SelfAwareSlackCommand implements Applicati
 
 	private ApplicationContext applicationContext;
 
-	public HelpSlackCommand(MustacheTemplateService mustacheTemplateService) {
+	public HelpSlackCommand(SlackService slackService, SlackBootProperties slackBootProperties,
+			CounterService counterService, Self self, MustacheTemplateService mustacheTemplateService) {
+
+		super(slackService, slackBootProperties, counterService, self);
 		this.mustacheTemplateService = mustacheTemplateService;
 	}
 
@@ -57,13 +64,15 @@ public class HelpSlackCommand extends SelfAwareSlackCommand implements Applicati
 	@Override
 	public void handle(MessageEvent message) {
 
-		List<String> commandHelp = applicationContext.getBeansOfType(SlackCommand.class).values().stream()
-			.map(command -> mustacheTemplateService.processTemplateIntoString(command.getClass().getSimpleName() + "-help", Collections.emptyMap()))
-			.collect(Collectors.toList());
+		List<String> commandHelp = applicationContext
+				.getBeansOfType(SlackCommand.class).values().stream().map(command -> mustacheTemplateService
+						.processTemplateIntoString(command.getClass().getSimpleName() + "-help", Collections.emptyMap()))
+				.collect(Collectors.toList());
 
 		Map<String, Object> model = new HashMap<>();
 		model.put("commands", commandHelp);
-		String helpMessage = mustacheTemplateService.processTemplateIntoString(this.getClass().getSimpleName() + "-message", model);
+		String helpMessage = mustacheTemplateService.processTemplateIntoString(this.getClass().getSimpleName() + "-message",
+				model);
 
 		getSlackService().sendMessage(getToken(), helpMessage, message.getChannel(), true);
 

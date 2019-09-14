@@ -15,8 +15,6 @@
  */
 package io.spring.slackboot.core;
 
-import lombok.Getter;
-
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;
@@ -49,12 +47,10 @@ class SlackWebSocketHandler extends TextWebSocketHandler {
 	private final SlackBootProperties slackBootProperties;
 
 	private DeadmanSwitch deadmanSwitch;
-	private @Getter List<SlackEventHandler> slackEventHandlers;
+	private List<SlackEventHandler> slackEventHandlers;
 
-	public SlackWebSocketHandler(ObjectMapper objectMapper,
-								 SlackBootProperties slackBootProperties,
-								 DeadmanSwitch deadmanSwitch,
-								 @Autowired(required = false) List<SlackEventHandler> slackEventHandlers) {
+	public SlackWebSocketHandler(ObjectMapper objectMapper, SlackBootProperties slackBootProperties,
+			DeadmanSwitch deadmanSwitch, @Autowired(required = false) List<SlackEventHandler> slackEventHandlers) {
 
 		this.objectMapper = objectMapper;
 		this.slackBootProperties = slackBootProperties;
@@ -76,15 +72,18 @@ class SlackWebSocketHandler extends TextWebSocketHandler {
 			}
 
 			Map<String, Object> jsonMessage = objectMapper.readValue(message.getPayload(),
-				new TypeReference<Map<String, Object>>() {});
+					new TypeReference<Map<String, Object>>() {});
 
-			slackEventHandlers.stream()
-				.filter(slackEventHandler -> slackEventHandler.handles(jsonMessage))
-				.forEach(slackEventHandler -> slackEventHandler.handle(message.getPayload()));
+			slackEventHandlers.stream().filter(slackEventHandler -> slackEventHandler.handles(jsonMessage))
+					.forEach(slackEventHandler -> slackEventHandler.handle(message.getPayload()));
 		} catch (Exception e) {
 			// Swallow all exceptions to avoid breaking the event loop.
 			e.printStackTrace();
 			log.error(e.getMessage());
 		}
+	}
+
+	public List<SlackEventHandler> getSlackEventHandlers() {
+		return slackEventHandlers;
 	}
 }

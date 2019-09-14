@@ -23,11 +23,14 @@ import io.spring.slackboot.commands.domain.GitHubHookDetails;
 import io.spring.slackboot.commands.domain.Guide;
 import io.spring.slackboot.core.SelfAwareSlackCommand;
 import io.spring.slackboot.core.domain.MessageEvent;
+import io.spring.slackboot.core.domain.Self;
+import io.spring.slackboot.core.domain.SlackBootProperties;
+import io.spring.slackboot.core.services.SlackService;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
+import org.springframework.boot.actuate.metrics.CounterService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.social.github.api.GitHubHook;
 import org.springframework.social.github.api.impl.GitHubTemplate;
@@ -44,7 +47,10 @@ public class GuideCacheSlackCommand extends SelfAwareSlackCommand {
 
 	private final GitHubTemplate gitHubTemplate;
 
-	public GuideCacheSlackCommand(GitHubTemplate gitHubTemplate) {
+	public GuideCacheSlackCommand(SlackService slackService, SlackBootProperties slackBootProperties,
+			CounterService counterService, Self self, GitHubTemplate gitHubTemplate) {
+
+		super(slackService, slackBootProperties, counterService, self);
 		this.gitHubTemplate = gitHubTemplate;
 	}
 
@@ -59,11 +65,11 @@ public class GuideCacheSlackCommand extends SelfAwareSlackCommand {
 		if (justOne(message)) {
 
 			Arrays.stream(message.getText().split("\\s+"))
-				.filter(token -> token.startsWith("gs-") || token.startsWith("tut-") || token.startsWith("top-"))
-				.forEach(guideName -> {
-					getSlackService().sendMessage(getToken(), "Ok, I'll try to clear " + guideName, message.getChannel(), true);
-					fireHook(guideName, message);
-				});
+					.filter(token -> token.startsWith("gs-") || token.startsWith("tut-") || token.startsWith("top-"))
+					.forEach(guideName -> {
+						getSlackService().sendMessage(getToken(), "Ok, I'll try to clear " + guideName, message.getChannel(), true);
+						fireHook(guideName, message);
+					});
 
 		} else if (all(message)) {
 
@@ -73,18 +79,15 @@ public class GuideCacheSlackCommand extends SelfAwareSlackCommand {
 			try {
 				Document doc = Jsoup.connect("https://spring.io/guides").get();
 
-				doc.select(GUIDE_CLASS).stream()
-					.map(element -> element.attr("href"))
-					.sorted()
-					.map(Guide::new)
-					.map(Guide::getName)
-					.forEach(guideName -> fireHook(guideName, message));
+				doc.select(GUIDE_CLASS).stream().map(element -> element.attr("href")).sorted().map(Guide::new)
+						.map(Guide::getName).forEach(guideName -> fireHook(guideName, message));
 
 				getSlackService().sendMessage(getToken(), "Done and DONE!", message.getChannel(), true);
 
 			} catch (IOException e) {
 				log.error(e.getMessage());
-				getSlackService().sendMessage(getToken(), "Hmm. Something went wrong -> " + e.getMessage(), message.getChannel(), true);
+				getSlackService().sendMessage(getToken(), "Hmm. Something went wrong -> " + e.getMessage(),
+						message.getChannel(), true);
 			}
 
 		} else {
@@ -105,16 +108,13 @@ public class GuideCacheSlackCommand extends SelfAwareSlackCommand {
 
 	private void fireHook(String guide, MessageEvent message) {
 
-		gitHubTemplate.repoOperations().getHooks("spring-guides", guide).stream()
-			.map(this::toGithubHookDetails)
-			.filter(this::hasSpringIoWebHook)
-			.findAny()
-			.map(this::fireSpringIoWebHook)
-			.orElseGet(() -> {
-				getSlackService().sendMessage(getToken(), "Hmm. Looks like you don't have a webhook yet. See https://github.com/spring-guides/getting-started-guides/wiki/Create-a-Repository for help.", message.getChannel(), true);
-				return Optional.empty();
-			})
-			.ifPresent(response -> handleResponse(response, guide, message));
+		gitHubTemplate.repoOperations().getHooks("spring-guides", guide).stream().map(this::toGithubHookDetails)
+				.filter(this::hasSpringIoWebHook).findAny().map(this::fireSpringIoWebHook).orElseGet(() -> {
+					getSlackService().sendMessage(getToken(),
+							"Hmm. Looks like you don't have a webhook yet. See https://github.com/spring-guides/getting-started-guides/wiki/Create-a-Repository for help.",
+							message.getChannel(), true);
+					return Optional.empty();
+				}).ifPresent(response -> handleResponse(response, guide, message));
 	}
 
 	private GitHubHookDetails toGithubHookDetails(GitHubHook gitHubHook) {
@@ -123,8 +123,7 @@ public class GuideCacheSlackCommand extends SelfAwareSlackCommand {
 
 	private boolean hasSpringIoWebHook(GitHubHookDetails gitHubHookDetails) {
 
-		return Optional.ofNullable(gitHubHookDetails.getConfig().getUrl())
-				.map(url -> url.contains("spring.io/webhook"))
+		return Optional.ofNullable(gitHubHookDetails.getConfig().getUrl()).map(url -> url.contains("spring.io/webhook"))
 				.orElse(false);
 	}
 
@@ -136,17 +135,18 @@ public class GuideCacheSlackCommand extends SelfAwareSlackCommand {
 	 * @return
 	 */
 	private Optional<ResponseEntity<?>> fireSpringIoWebHook(GitHubHookDetails gitHubHookDetails) {
-		return Optional.of(gitHubTemplate.getRestTemplate().postForEntity(gitHubHookDetails.getUrl() + "/test", null, Object.class));
+		return Optional
+				.of(gitHubTemplate.getRestTemplate().postForEntity(gitHubHookDetails.getUrl() + "/test", null, Object.class));
 	}
 
 	private void handleResponse(ResponseEntity<?> response, String guide, MessageEvent message) {
-		
+
 		if (response.getStatusCodeValue() < 300) {
 			getSlackService().sendMessage(getToken(), guide + " has been cleared.", message.getChannel(), true);
 			getCounterService().increment("slack.boot.guides.cacheCleared.successful");
 		} else {
-			getSlackService().sendMessage(getToken(),
-					"Wow. Something went wrong with " + guide + ", " + response.toString(), message.getChannel(), true);
+			getSlackService().sendMessage(getToken(), "Wow. Something went wrong with " + guide + ", " + response.toString(),
+					message.getChannel(), true);
 			getCounterService().increment("slack.boot.guides.cacheCleared.failure");
 		}
 

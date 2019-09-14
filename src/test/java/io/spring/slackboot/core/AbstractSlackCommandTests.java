@@ -23,7 +23,6 @@ import io.spring.slackboot.core.domain.SlackBootProperties;
 import io.spring.slackboot.core.services.SlackService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.metrics.CounterService;
 import org.springframework.boot.actuate.metrics.repository.InMemoryMetricRepository;
@@ -59,9 +58,18 @@ public class AbstractSlackCommandTests {
 	@EnableConfigurationProperties(SlackBootProperties.class)
 	static class TestConfig {
 
+		@Autowired
+		SlackService slackService;
+
+		@Autowired
+		SlackBootProperties slackBootProperties;
+
+		@Autowired
+		CounterService counterService;
+
 		@Bean
 		AbstractSlackCommand slackCommand() {
-			return new AbstractSlackCommand() {
+			return new AbstractSlackCommand(slackService, slackBootProperties, counterService) {
 				@Override
 				public boolean match(MessageEvent message) {
 					return true;

@@ -16,6 +16,7 @@
 package io.spring.slackboot.core.services;
 
 import io.spring.slackboot.core.domain.RtmStartResponse;
+
 import org.springframework.cloud.netflix.feign.FeignClient;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -29,14 +30,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 @FeignClient(name = "slackService", url = "https://slack.com")
 public interface SlackService {
 
-	@RequestMapping(method = RequestMethod.GET, value = "/api/rtm.start", params = {"pretty=1"})
+	@RequestMapping(method = RequestMethod.GET, value = "/api/rtm.start", params = { "pretty=1" })
 	RtmStartResponse rtmStart(@RequestParam("token") String token);
 
 	@RequestMapping(method = RequestMethod.POST, value = "/api/chat.postMessage")
-	void sendMessage(@RequestParam("token") String token,
-					 @RequestParam("text") String text,
-					 @RequestParam("channel") String channel,
-					 @RequestParam("as_user") boolean asUser);
-
+	void sendMessage(@RequestParam("token") String token, @RequestParam("text") String text,
+			@RequestParam("channel") String channel, @RequestParam("as_user") boolean asUser);
 
 }

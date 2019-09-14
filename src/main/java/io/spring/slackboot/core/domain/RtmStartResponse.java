@@ -15,22 +15,70 @@
  */
 package io.spring.slackboot.core.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import java.util.Objects;
 
 /**
  * First response when opening a WebSocket with Slack's RTM service.
  *
  * @author Greg Turnquist
  */
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class RtmStartResponse {
 
 	private boolean ok;
 	private String url;
 	private Self self;
 
+	public RtmStartResponse() {}
+
+	public RtmStartResponse(boolean ok, String url, Self self) {
+
+		this.ok = ok;
+		this.url = url;
+		this.self = self;
+	}
+
+	public boolean isOk() {
+		return ok;
+	}
+
+	public void setOk(boolean ok) {
+		this.ok = ok;
+	}
+
+	public String getUrl() {
+		return url;
+	}
+
+	public void setUrl(String url) {
+		this.url = url;
+	}
+
+	public Self getSelf() {
+		return self;
+	}
+
+	public void setSelf(Self self) {
+		this.self = self;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+
+		if (this == o)
+			return true;
+		if (o == null || getClass() != o.getClass())
+			return false;
+		RtmStartResponse that = (RtmStartResponse) o;
+		return ok == that.ok && Objects.equals(url, that.url) && Objects.equals(self, that.self);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(ok, url, self);
+	}
+
+	@Override
+	public String toString() {
+		return "RtmStartResponse{" + "ok=" + ok + ", url='" + url + '\'' + ", self=" + self + '}';
+	}
 }

@@ -15,7 +15,7 @@
  */
 package io.spring.slackboot.core.domain;
 
-import lombok.Data;
+import java.util.Objects;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
@@ -25,7 +25,6 @@ import org.springframework.stereotype.Component;
  *
  * @author Greg Turnquist
  */
-@Data
 @Component
 @ConfigurationProperties(prefix = "slack.boot")
 public class SlackBootProperties {
@@ -39,4 +38,68 @@ public class SlackBootProperties {
 	// Pure debugging tool, meant to force a deadman switch to kick in.
 	private boolean randomNap = false;
 
+	public String getToken() {
+		return token;
+	}
+
+	public void setToken(String token) {
+		this.token = token;
+	}
+
+	public String getGithubToken() {
+		return githubToken;
+	}
+
+	public void setGithubToken(String githubToken) {
+		this.githubToken = githubToken;
+	}
+
+	public boolean isDebugFeign() {
+		return debugFeign;
+	}
+
+	public void setDebugFeign(boolean debugFeign) {
+		this.debugFeign = debugFeign;
+	}
+
+	public long getDeadmanLimitMinutes() {
+		return deadmanLimitMinutes;
+	}
+
+	public void setDeadmanLimitMinutes(long deadmanLimitMinutes) {
+		this.deadmanLimitMinutes = deadmanLimitMinutes;
+	}
+
+	public boolean isRandomNap() {
+		return randomNap;
+	}
+
+	public void setRandomNap(boolean randomNap) {
+		this.randomNap = randomNap;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+
+		if (this == o)
+			return true;
+		if (o == null || getClass() != o.getClass())
+			return false;
+		SlackBootProperties that = (SlackBootProperties) o;
+		return debugFeign == that.debugFeign && deadmanLimitMinutes == that.deadmanLimitMinutes
+				&& randomNap == that.randomNap && Objects.equals(token, that.token)
+				&& Objects.equals(githubToken, that.githubToken);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(token, githubToken, debugFeign, deadmanLimitMinutes, randomNap);
+	}
+
+	@Override
+	public String toString() {
+
+		return "SlackBootProperties{" + "token='" + token + '\'' + ", githubToken='" + githubToken + '\'' + ", debugFeign="
+				+ debugFeign + ", deadmanLimitMinutes=" + deadmanLimitMinutes + ", randomNap=" + randomNap + '}';
+	}
 }

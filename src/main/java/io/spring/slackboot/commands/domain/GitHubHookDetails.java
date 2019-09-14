@@ -15,18 +15,64 @@
  */
 package io.spring.slackboot.commands.domain;
 
-import lombok.Data;
+import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 /**
  * @author Greg Turnquist
  */
-@Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class GitHubHookDetails {
 
 	private int id;
 	private String url;
 	private GitHubHookConfig config;
+
+	public GitHubHookDetails() {}
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public String getUrl() {
+		return url;
+	}
+
+	public void setUrl(String url) {
+		this.url = url;
+	}
+
+	public GitHubHookConfig getConfig() {
+		return config;
+	}
+
+	public void setConfig(GitHubHookConfig config) {
+		this.config = config;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+
+		if (this == o)
+			return true;
+		if (o == null || getClass() != o.getClass())
+			return false;
+		GitHubHookDetails that = (GitHubHookDetails) o;
+		return id == that.id && Objects.equals(url, that.url) && Objects.equals(config, that.config);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(id, url, config);
+	}
+
+	@Override
+	public String toString() {
+		return "GitHubHookDetails{" + "id=" + id + ", url='" + url + '\'' + ", config=" + config + '}';
+	}
 }

@@ -21,10 +21,14 @@ import java.util.Arrays;
 import io.spring.slackboot.commands.domain.Guide;
 import io.spring.slackboot.core.SelfAwareSlackCommand;
 import io.spring.slackboot.core.domain.MessageEvent;
+import io.spring.slackboot.core.domain.Self;
+import io.spring.slackboot.core.domain.SlackBootProperties;
+import io.spring.slackboot.core.services.SlackService;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.actuate.metrics.CounterService;
 import org.springframework.stereotype.Component;
 
 /**
@@ -36,6 +40,10 @@ public class ShowMeSlackCommand extends SelfAwareSlackCommand {
 	private static final Logger log = LoggerFactory.getLogger(ShowMeSlackCommand.class);
 
 	private static final String GUIDE_CLASS = "a.guide--title";
+
+	public ShowMeSlackCommand(SlackService slackService, SlackBootProperties slackBootProperties, CounterService counterService, Self self) {
+		super(slackService, slackBootProperties, counterService, self);
+	}
 
 	@Override
 	protected boolean also(MessageEvent message) {
