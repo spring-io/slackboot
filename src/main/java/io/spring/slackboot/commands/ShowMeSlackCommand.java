@@ -21,7 +21,6 @@ import java.util.Arrays;
 import io.spring.slackboot.commands.domain.Guide;
 import io.spring.slackboot.core.SelfAwareSlackCommand;
 import io.spring.slackboot.core.domain.MessageEvent;
-import io.spring.slackboot.core.domain.Self;
 import io.spring.slackboot.core.domain.SlackBootProperties;
 import io.spring.slackboot.core.services.SlackService;
 import org.jsoup.Jsoup;
@@ -40,8 +39,8 @@ public class ShowMeSlackCommand extends SelfAwareSlackCommand {
 
 	private static final String GUIDE_CLASS = "a.guide--title";
 
-	public ShowMeSlackCommand(SlackService slackService, SlackBootProperties slackBootProperties, Self self) {
-		super(slackService, slackBootProperties, self);
+	public ShowMeSlackCommand(SlackService slackService, SlackBootProperties slackBootProperties) {
+		super(slackService, slackBootProperties);
 	}
 
 	@Override

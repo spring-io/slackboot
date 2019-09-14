@@ -45,12 +45,10 @@ public class SelfAwareSlackCommandTests {
 
 	@MockBean SlackBootProperties slackBootProperties;
 
-	@MockBean Self self;
-
 	@Before
 	public void setUp() {
 
-		this.selfAwareSlackCommand = new SelfAwareSlackCommand(slackService, slackBootProperties, self) {
+		this.selfAwareSlackCommand = new SelfAwareSlackCommand(slackService, slackBootProperties) {
 			@Override
 			protected boolean also(MessageEvent message) {
 				return message.getText().contains("should respond");

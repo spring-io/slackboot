@@ -24,7 +24,6 @@ import java.util.stream.Collectors;
 import io.spring.slackboot.core.SelfAwareSlackCommand;
 import io.spring.slackboot.core.SlackCommand;
 import io.spring.slackboot.core.domain.MessageEvent;
-import io.spring.slackboot.core.domain.Self;
 import io.spring.slackboot.core.domain.SlackBootProperties;
 import io.spring.slackboot.core.services.MustacheTemplateService;
 import io.spring.slackboot.core.services.SlackService;
@@ -43,10 +42,10 @@ public class HelpSlackCommand extends SelfAwareSlackCommand implements Applicati
 
 	private ApplicationContext applicationContext;
 
-	public HelpSlackCommand(SlackService slackService, SlackBootProperties slackBootProperties, Self self,
+	public HelpSlackCommand(SlackService slackService, SlackBootProperties slackBootProperties,
 			MustacheTemplateService mustacheTemplateService) {
 
-		super(slackService, slackBootProperties, self);
+		super(slackService, slackBootProperties);
 		this.mustacheTemplateService = mustacheTemplateService;
 	}
 

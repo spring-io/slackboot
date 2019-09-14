@@ -23,9 +23,9 @@ import java.util.List;
 import java.util.Map;
 
 import io.spring.slackboot.core.domain.SlackBootProperties;
+import io.spring.slackboot.core.handlers.SlackEventHandler;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -37,8 +37,6 @@ import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-import io.spring.slackboot.core.handlers.SlackEventHandler;
 
 /**
  * @author Greg Turnquist
@@ -127,8 +125,9 @@ public class SlackWebSocketHandlerTests {
 		SlackWebSocketHandler slackWebSocketHandler(ObjectMapper objectMapper,
 													SlackBootProperties slackBootProperties,
 													DeadmanSwitch deadmanSwitch,
-													List<SlackEventHandler> handlers) {
-			return new SlackWebSocketHandler(objectMapper, slackBootProperties, deadmanSwitch, handlers);
+													List<SlackEventHandler> handlers,
+													PingingService pingingService) {
+			return new SlackWebSocketHandler(objectMapper, slackBootProperties, deadmanSwitch, handlers, pingingService);
 		}
 	}
 

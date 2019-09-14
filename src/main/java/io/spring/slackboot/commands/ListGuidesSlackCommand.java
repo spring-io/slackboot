@@ -23,7 +23,6 @@ import java.util.stream.Collectors;
 import io.spring.slackboot.commands.domain.Guide;
 import io.spring.slackboot.core.SelfAwareSlackCommand;
 import io.spring.slackboot.core.domain.MessageEvent;
-import io.spring.slackboot.core.domain.Self;
 import io.spring.slackboot.core.domain.SlackBootProperties;
 import io.spring.slackboot.core.services.MustacheTemplateService;
 import io.spring.slackboot.core.services.SlackService;
@@ -45,10 +44,10 @@ public class ListGuidesSlackCommand extends SelfAwareSlackCommand {
 
 	private final MustacheTemplateService mustacheTemplateService;
 
-	public ListGuidesSlackCommand(SlackService slackService, SlackBootProperties slackBootProperties, Self self,
+	public ListGuidesSlackCommand(SlackService slackService, SlackBootProperties slackBootProperties,
 			MustacheTemplateService mustacheTemplateService) {
 
-		super(slackService, slackBootProperties, self);
+		super(slackService, slackBootProperties);
 		this.mustacheTemplateService = mustacheTemplateService;
 	}
 

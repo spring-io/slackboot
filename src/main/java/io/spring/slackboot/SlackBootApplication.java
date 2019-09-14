@@ -16,8 +16,10 @@
 
 package io.spring.slackboot;
 
+import io.spring.slackboot.core.domain.Self;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
 
 /**
  * @author Greg Turnquist
@@ -27,6 +29,10 @@ public class SlackBootApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(SlackBootApplication.class, args);
+	}
+
+	@Bean Self self() {
+		return new Self();
 	}
 
 }

@@ -23,7 +23,6 @@ import io.spring.slackboot.commands.domain.GitHubHookDetails;
 import io.spring.slackboot.commands.domain.Guide;
 import io.spring.slackboot.core.SelfAwareSlackCommand;
 import io.spring.slackboot.core.domain.MessageEvent;
-import io.spring.slackboot.core.domain.Self;
 import io.spring.slackboot.core.domain.SlackBootProperties;
 import io.spring.slackboot.core.services.SlackService;
 import org.jsoup.Jsoup;
@@ -46,10 +45,10 @@ public class GuideCacheSlackCommand extends SelfAwareSlackCommand {
 
 	private final GitHubTemplate gitHubTemplate;
 
-	public GuideCacheSlackCommand(SlackService slackService, SlackBootProperties slackBootProperties, Self self,
+	public GuideCacheSlackCommand(SlackService slackService, SlackBootProperties slackBootProperties,
 			GitHubTemplate gitHubTemplate) {
 
-		super(slackService, slackBootProperties, self);
+		super(slackService, slackBootProperties);
 		this.gitHubTemplate = gitHubTemplate;
 	}
 

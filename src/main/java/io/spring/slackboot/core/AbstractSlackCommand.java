@@ -16,6 +16,7 @@
 package io.spring.slackboot.core;
 
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicLong;
 
 import io.spring.slackboot.core.domain.SlackBootProperties;
 import io.spring.slackboot.core.services.SlackService;
@@ -28,6 +29,7 @@ import io.spring.slackboot.core.services.SlackService;
  */
 public abstract class AbstractSlackCommand implements SlackCommand {
 
+	private AtomicLong id = new AtomicLong(1);
 	private SlackService slackService;
 	private SlackBootProperties slackBootProperties;
 
@@ -43,6 +45,10 @@ public abstract class AbstractSlackCommand implements SlackCommand {
 
 	public SlackBootProperties getSlackBootProperties() {
 		return slackBootProperties;
+	}
+
+	public long getId() {
+		return this.id.getAndIncrement();
 	}
 
 	public String getToken() {

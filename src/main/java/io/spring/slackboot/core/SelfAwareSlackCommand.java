@@ -38,10 +38,8 @@ public abstract class SelfAwareSlackCommand extends AbstractSlackCommand
 
 	private Self self;
 
-	public SelfAwareSlackCommand(SlackService slackService, SlackBootProperties slackBootProperties, Self self) {
-
+	public SelfAwareSlackCommand(SlackService slackService, SlackBootProperties slackBootProperties) {
 		super(slackService, slackBootProperties);
-		this.self = self;
 	}
 
 	/**

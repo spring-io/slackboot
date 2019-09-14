@@ -37,4 +37,7 @@ public interface SlackService {
 	void sendMessage(@RequestParam("token") String token, @RequestParam("text") String text,
 			@RequestParam("channel") String channel, @RequestParam("as_user") boolean asUser);
 
+	@RequestMapping(method = RequestMethod.POST, value = "/api/chat.postMessage")
+	void sendPing(@RequestParam("id") long id, @RequestParam("token") String token, @RequestParam("type") String type,
+			@RequestParam("channel") String channel, @RequestParam("text") String text);
 }

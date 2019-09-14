@@ -20,7 +20,6 @@ import java.util.Random;
 
 import io.spring.slackboot.core.SelfAwareSlackCommand;
 import io.spring.slackboot.core.domain.MessageEvent;
-import io.spring.slackboot.core.domain.Self;
 import io.spring.slackboot.core.domain.SlackBootProperties;
 import io.spring.slackboot.core.services.SlackService;
 import org.springframework.stereotype.Component;
@@ -36,9 +35,9 @@ public class CongratsSlackCommand extends SelfAwareSlackCommand {
 
 	private final Random random;
 
-	public CongratsSlackCommand(SlackService slackService, SlackBootProperties slackBootProperties, Self self) {
+	public CongratsSlackCommand(SlackService slackService, SlackBootProperties slackBootProperties) {
 
-		super(slackService, slackBootProperties, self);
+		super(slackService, slackBootProperties);
 		this.random = new Random();
 	}
 

@@ -15,19 +15,18 @@
  */
 package io.spring.slackboot.core;
 
-import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
-
-import java.util.concurrent.CountDownLatch;
 
 import io.spring.slackboot.core.domain.BotLoggedInEvent;
 import io.spring.slackboot.core.domain.RtmStartResponse;
 import io.spring.slackboot.core.domain.Self;
 import io.spring.slackboot.core.domain.SlackBootProperties;
 import io.spring.slackboot.core.services.SlackService;
+
+import java.util.concurrent.CountDownLatch;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -45,17 +44,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 @SpringBootTest(classes = SlackBootInitializerTests.TestConfig.class)
 public class SlackBootInitializerTests {
 
-	@Autowired
-	SlackBootInitializer slackBootInitializer;
+	@Autowired SlackBootInitializer slackBootInitializer;
 
-	@Autowired
-	SlackService slackService;
+	@Autowired SlackService slackService;
 
-	@MockBean
-	SlackWebSocketHandler slackWebSocketHandler;
+	@MockBean SlackWebSocketHandler slackWebSocketHandler;
 
-	@Autowired
-	CountDownLatch countDownLatch;
+	@Autowired CountDownLatch countDownLatch;
 
 	@Test
 	public void noop() throws InterruptedException {
@@ -84,7 +79,15 @@ public class SlackBootInitializerTests {
 				}
 
 				@Override
-				public void sendMessage(@RequestParam("token") String token, @RequestParam("text") String text, @RequestParam("channel") String channel, @RequestParam("as_user") boolean asUser) {
+				public void sendMessage(@RequestParam("token") String token, @RequestParam("text") String text,
+						@RequestParam("channel") String channel, @RequestParam("as_user") boolean asUser) {
+					// We don't care for this test case
+				}
+
+				@Override
+				public void sendPing(@RequestParam("id") long id, @RequestParam("token") String token,
+						@RequestParam("type") String type, @RequestParam("channel") String channel,
+						@RequestParam("text") String text) {
 					// We don't care for this test case
 				}
 			};
@@ -96,9 +99,8 @@ public class SlackBootInitializerTests {
 		}
 
 		@Bean
-		SlackBootInitializer slackBootInitializer(SlackService slackService,
-												  SlackBootProperties slackBootProperties,
-												  SlackWebSocketHandler slackWebSocketHandler) {
+		SlackBootInitializer slackBootInitializer(SlackService slackService, SlackBootProperties slackBootProperties,
+				SlackWebSocketHandler slackWebSocketHandler) {
 			return new SlackBootInitializer(slackService, slackBootProperties, slackWebSocketHandler);
 		}
 

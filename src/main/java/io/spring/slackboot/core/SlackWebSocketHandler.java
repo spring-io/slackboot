@@ -15,13 +15,12 @@
  */
 package io.spring.slackboot.core;
 
-import io.spring.slackboot.core.domain.SlackBootProperties;
-import io.spring.slackboot.core.handlers.SlackEventHandler;
-
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 
+import io.spring.slackboot.core.domain.SlackBootProperties;
+import io.spring.slackboot.core.handlers.SlackEventHandler;
 import org.apache.commons.lang.math.RandomUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,21 +48,29 @@ class SlackWebSocketHandler extends TextWebSocketHandler {
 
 	private DeadmanSwitch deadmanSwitch;
 	private List<SlackEventHandler> slackEventHandlers;
+	private final PingingService pingingService;
 
 	public SlackWebSocketHandler(ObjectMapper objectMapper, SlackBootProperties slackBootProperties,
-			DeadmanSwitch deadmanSwitch, @Autowired(required = false) List<SlackEventHandler> slackEventHandlers) {
+			DeadmanSwitch deadmanSwitch, @Autowired(required = false) List<SlackEventHandler> slackEventHandlers,
+			PingingService pingingService) {
 
 		this.objectMapper = objectMapper;
 		this.slackBootProperties = slackBootProperties;
 		this.deadmanSwitch = deadmanSwitch;
 		this.slackEventHandlers = slackEventHandlers;
+		this.pingingService = pingingService;
 	}
 
 	@Override
 	protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
 
+		if (this.pingingService.getSession() == null) {
+			this.pingingService.setSession(session);
+		}
+
 		try {
 			deadmanSwitch.reset("WebSocket", Duration.ofMinutes(slackBootProperties.getDeadmanLimitMinutes()));
+			pingingService.reset();
 
 			if (slackBootProperties.isRandomNap()) {
 				if (RandomUtils.nextBoolean()) {
@@ -75,7 +82,8 @@ class SlackWebSocketHandler extends TextWebSocketHandler {
 			Map<String, Object> jsonMessage = objectMapper.readValue(message.getPayload(),
 					new TypeReference<Map<String, Object>>() {});
 
-			slackEventHandlers.stream().filter(slackEventHandler -> slackEventHandler.handles(jsonMessage))
+			slackEventHandlers.stream() //
+					.filter(slackEventHandler -> slackEventHandler.handles(jsonMessage)) //
 					.forEach(slackEventHandler -> slackEventHandler.handle(message.getPayload()));
 		} catch (Exception e) {
 			// Swallow all exceptions to avoid breaking the event loop.
