@@ -1,6 +1,6 @@
 language: groovy
 jdk:
-- oraclejdk8
+- openjdk8
 sudo: required
 before_install:
 - wget -O cf-linux.tgz "https://cli.run.pivotal.io/stable?release=linux64-binary&source=github"
