@@ -15,11 +15,10 @@
  */
 package io.spring.slackboot.core.handlers;
 
-import io.spring.slackboot.core.SlackCommand;
-import io.spring.slackboot.core.domain.MessageEvent;
-
 import java.util.List;
 
+import io.spring.slackboot.core.SlackCommand;
+import io.spring.slackboot.core.domain.MessageEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,11 +63,15 @@ public class SlackMessageHandler extends SlackEventHandler<MessageEvent> {
 	@Override
 	protected void doHandle(MessageEvent message) {
 
-		log.info("Reading '" + message.getText() + "' on channel '" + message.getChannel() + "'");
+		if (message != null) {
+			log.info("Reading '" + message.getText() + "' on channel '" + message.getChannel() + "'");
 
-		commands.stream() //
+			commands.stream() //
 				.filter(slackCommand -> slackCommand.match(message)) //
 				.forEach(slackCommand -> slackCommand.handle(message));
+		} else {
+			log.debug("Received a null message.");
+		}
 	}
 
 	/**
