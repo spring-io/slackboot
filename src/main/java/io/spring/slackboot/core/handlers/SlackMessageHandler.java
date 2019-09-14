@@ -15,10 +15,11 @@
  */
 package io.spring.slackboot.core.handlers;
 
-import java.util.List;
-
 import io.spring.slackboot.core.SlackCommand;
 import io.spring.slackboot.core.domain.MessageEvent;
+
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

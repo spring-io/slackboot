@@ -15,10 +15,11 @@
  */
 package io.spring.slackboot.core;
 
-import java.util.Objects;
-
 import io.spring.slackboot.core.domain.SlackBootProperties;
 import io.spring.slackboot.core.services.SlackService;
+
+import java.util.Objects;
+
 import org.springframework.boot.actuate.metrics.CounterService;
 
 /**

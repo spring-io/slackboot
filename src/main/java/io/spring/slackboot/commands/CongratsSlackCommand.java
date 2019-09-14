@@ -15,14 +15,15 @@
  */
 package io.spring.slackboot.commands;
 
-import java.util.Arrays;
-import java.util.Random;
-
 import io.spring.slackboot.core.SelfAwareSlackCommand;
 import io.spring.slackboot.core.domain.MessageEvent;
 import io.spring.slackboot.core.domain.Self;
 import io.spring.slackboot.core.domain.SlackBootProperties;
 import io.spring.slackboot.core.services.SlackService;
+
+import java.util.Arrays;
+import java.util.Random;
+
 import org.springframework.boot.actuate.metrics.CounterService;
 import org.springframework.stereotype.Component;
 
@@ -32,8 +33,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class CongratsSlackCommand extends SelfAwareSlackCommand {
 
-	private String[] compliments = new String[]{"good job", "awesome", "nice work", "thanks"};
-	private String[] thanks = new String []{"Thanks!", "Glad to be of help"};
+	private String[] compliments = new String[] { "good job", "awesome", "nice work", "thanks" };
+	private String[] thanks = new String[] { "Thanks!", "Glad to be of help" };
 
 	private final Random random;
 
@@ -47,13 +48,12 @@ public class CongratsSlackCommand extends SelfAwareSlackCommand {
 	@Override
 	protected boolean also(MessageEvent message) {
 
-		return Arrays.stream(compliments)
-			.anyMatch(s -> message.getText().toLowerCase().contains(s));
+		return Arrays.stream(compliments).anyMatch(s -> message.getText().toLowerCase().contains(s));
 	}
 
 	@Override
 	public void handle(MessageEvent message) {
-		
+
 		if (message.getText().toLowerCase().contains("thanks")) {
 			getSlackService().sendMessage(getToken(), "You're welcome.", message.getChannel(), true);
 		} else {

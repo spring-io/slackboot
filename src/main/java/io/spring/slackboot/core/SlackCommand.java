@@ -18,10 +18,8 @@ package io.spring.slackboot.core;
 import io.spring.slackboot.core.domain.MessageEvent;
 
 /**
- * Base interface for all custom Slack commands.
- *
- * Includes a check for whether or not command fits the incoming {@link MessageEvent} and also
- * a method to process it.
+ * Base interface for all custom Slack commands. Includes a check for whether or not command fits the incoming
+ * {@link MessageEvent} and also a method to process it.
  *
  * @author Greg Turnquist
  */

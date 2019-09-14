@@ -15,10 +15,6 @@
  */
 package io.spring.slackboot.commands;
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Optional;
-
 import io.spring.slackboot.commands.domain.GitHubHookDetails;
 import io.spring.slackboot.commands.domain.Guide;
 import io.spring.slackboot.core.SelfAwareSlackCommand;
@@ -26,6 +22,11 @@ import io.spring.slackboot.core.domain.MessageEvent;
 import io.spring.slackboot.core.domain.Self;
 import io.spring.slackboot.core.domain.SlackBootProperties;
 import io.spring.slackboot.core.services.SlackService;
+
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Optional;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.slf4j.Logger;

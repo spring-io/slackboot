@@ -17,13 +17,11 @@ package io.spring.slackboot.core.config;
 
 import feign.Logger;
 import io.spring.slackboot.core.services.SlackService;
+
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cloud.netflix.feign.EnableFeignClients;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 
 /**
  * Configure beans to support this bot.

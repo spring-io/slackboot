@@ -44,11 +44,10 @@ public class DeadmanSwitch {
 	public void reset(String context, Duration duration) {
 
 		// Clear (and cancel) out previous switch at this context
-		Optional.ofNullable(switches.get(context))
-			.ifPresent(scheduledFuture -> {
-				log.debug("Old deadman switch '" + context + "' canceled.");
-				scheduledFuture.cancel(true);
-			});
+		Optional.ofNullable(switches.get(context)).ifPresent(scheduledFuture -> {
+			log.debug("Old deadman switch '" + context + "' canceled.");
+			scheduledFuture.cancel(true);
+		});
 
 		log.debug("Scheduling deadman switch '" + context + "'");
 

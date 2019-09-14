@@ -15,12 +15,13 @@
  */
 package io.spring.slackboot.core;
 
+import io.spring.slackboot.core.domain.SlackBootProperties;
+import io.spring.slackboot.core.handlers.SlackEventHandler;
+
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 
-import io.spring.slackboot.core.domain.SlackBootProperties;
-import io.spring.slackboot.core.handlers.SlackEventHandler;
 import org.apache.commons.lang.math.RandomUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

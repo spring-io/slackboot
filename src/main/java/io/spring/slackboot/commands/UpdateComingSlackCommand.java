@@ -15,12 +15,13 @@
  */
 package io.spring.slackboot.commands;
 
-import java.util.Optional;
-
 import io.spring.slackboot.core.AbstractSlackCommand;
 import io.spring.slackboot.core.domain.MessageEvent;
 import io.spring.slackboot.core.domain.SlackBootProperties;
 import io.spring.slackboot.core.services.SlackService;
+
+import java.util.Optional;
+
 import org.springframework.boot.actuate.metrics.CounterService;
 import org.springframework.stereotype.Component;
 
@@ -33,7 +34,8 @@ public class UpdateComingSlackCommand extends AbstractSlackCommand {
 	public static final String GITHUB_REPO = "https://github.com/spring-io/slackboot";
 	public static final String TRAVIS_REPO = "https://travis-ci.com/spring-io/slackboot";
 
-	public UpdateComingSlackCommand(SlackService slackService, SlackBootProperties slackBootProperties, CounterService counterService) {
+	public UpdateComingSlackCommand(SlackService slackService, SlackBootProperties slackBootProperties,
+			CounterService counterService) {
 		super(slackService, slackBootProperties, counterService);
 	}
 
@@ -41,49 +43,37 @@ public class UpdateComingSlackCommand extends AbstractSlackCommand {
 	public boolean match(MessageEvent message) {
 
 		return Optional.ofNullable(message.getAttachments())
-			.map(attachments -> attachments.stream()
-				.anyMatch(attachment ->
-					attachment.getText().contains("<" + GITHUB_REPO + "/commit")
-					||
-					attachment.getText().contains("Build <" + TRAVIS_REPO)
-				))
-			.orElse(false);
+				.map(attachments -> attachments.stream()
+						.anyMatch(attachment -> attachment.getText().contains("<" + GITHUB_REPO + "/commit")
+								|| attachment.getText().contains("Build <" + TRAVIS_REPO)))
+				.orElse(false);
 	}
 
 	@Override
 	public void handle(MessageEvent message) {
 
 		// New Github commit?
-		message.getAttachments().stream()
-			.filter(attachment -> attachment.getText().contains("<" + GITHUB_REPO + "/commit"))
-			.findAny()
-			.ifPresent(attachment -> {
-				getSlackService().sendMessage(getToken(), "Ooh! Has someone made a change?", message.getChannel(), true);
-			});
+		message.getAttachments().stream().filter(attachment -> attachment.getText().contains("<" + GITHUB_REPO + "/commit"))
+				.findAny().ifPresent(attachment -> {
+					getSlackService().sendMessage(getToken(), "Ooh! Has someone made a change?", message.getChannel(), true);
+				});
 
 		// New Travis build?
 		message.getAttachments().stream()
-			.filter(attachment ->
-				attachment.getText().contains("Build <" + TRAVIS_REPO + "/builds")
-				&&
-				attachment.getText().contains("passed in")
-			)
-			.findAny()
-			.ifPresent(attachment -> {
-				getSlackService().sendMessage(getToken(), "Yipee! Looks like a new upgrade for me.", message.getChannel(), true);
-			});
+				.filter(attachment -> attachment.getText().contains("Build <" + TRAVIS_REPO + "/builds")
+						&& attachment.getText().contains("passed in"))
+				.findAny().ifPresent(attachment -> {
+					getSlackService().sendMessage(getToken(), "Yipee! Looks like a new upgrade for me.", message.getChannel(),
+							true);
+				});
 
 		// Failing Travis build?
 		message.getAttachments().stream()
-			.filter(attachment ->
-				attachment.getText().contains("Build <" + TRAVIS_REPO + "/builds")
-					&&
-					attachment.getText().contains("errored in")
-			)
-			.findAny()
-			.ifPresent(attachment -> {
-				getSlackService().sendMessage(getToken(), ":cry: Sorry your build job failed.", message.getChannel(), true);
-			});
+				.filter(attachment -> attachment.getText().contains("Build <" + TRAVIS_REPO + "/builds")
+						&& attachment.getText().contains("errored in"))
+				.findAny().ifPresent(attachment -> {
+					getSlackService().sendMessage(getToken(), ":cry: Sorry your build job failed.", message.getChannel(), true);
+				});
 
 	}
 }
