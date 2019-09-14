@@ -121,6 +121,9 @@ public class SlackWebSocketHandlerTests {
 		@MockBean
 		DeadmanSwitch deadmanSwitch;
 
+		@MockBean
+		PingingService pingingService;
+
 		@Bean
 		SlackWebSocketHandler slackWebSocketHandler(ObjectMapper objectMapper,
 													SlackBootProperties slackBootProperties,
