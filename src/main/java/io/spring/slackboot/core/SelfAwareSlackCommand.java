@@ -63,7 +63,7 @@ public abstract class SelfAwareSlackCommand extends AbstractSlackCommand
 	 */
 	@Override
 	public boolean match(MessageEvent message) {
-		return itsMe(message) && also(message);
+		return message != null && itsMe(message) && also(message);
 	}
 
 	/**
