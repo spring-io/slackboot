@@ -3,8 +3,6 @@ logging:
     io:
       spring:
         slackboot:
-          commands:
-            PingSlackCommand: DEBUG
           core:
             DeadmanSwitch: DEBUG
             PingingService: DEBUG

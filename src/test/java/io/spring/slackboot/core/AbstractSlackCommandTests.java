@@ -24,8 +24,6 @@ import io.spring.slackboot.core.services.SlackService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.actuate.metrics.repository.InMemoryMetricRepository;
-import org.springframework.boot.actuate.metrics.writer.MetricWriter;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Bean;
@@ -79,11 +77,6 @@ public class AbstractSlackCommandTests {
 		@Bean
 		SlackService slackService() {
 			return mock(SlackService.class);
-		}
-
-		@Bean
-		MetricWriter metricWriter() {
-			return new InMemoryMetricRepository();
 		}
 	}
 
