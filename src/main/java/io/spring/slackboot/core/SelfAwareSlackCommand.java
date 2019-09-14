@@ -23,7 +23,6 @@ import io.spring.slackboot.core.services.SlackService;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.actuate.metrics.CounterService;
 import org.springframework.context.ApplicationListener;
 
 /**
@@ -39,10 +38,9 @@ public abstract class SelfAwareSlackCommand extends AbstractSlackCommand
 
 	private Self self;
 
-	public SelfAwareSlackCommand(SlackService slackService, SlackBootProperties slackBootProperties,
-			CounterService counterService, Self self) {
+	public SelfAwareSlackCommand(SlackService slackService, SlackBootProperties slackBootProperties, Self self) {
 
-		super(slackService, slackBootProperties, counterService);
+		super(slackService, slackBootProperties);
 		this.self = self;
 	}
 

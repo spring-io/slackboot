@@ -15,16 +15,14 @@
  */
 package io.spring.slackboot.commands;
 
+import java.util.Arrays;
+import java.util.Random;
+
 import io.spring.slackboot.core.SelfAwareSlackCommand;
 import io.spring.slackboot.core.domain.MessageEvent;
 import io.spring.slackboot.core.domain.Self;
 import io.spring.slackboot.core.domain.SlackBootProperties;
 import io.spring.slackboot.core.services.SlackService;
-
-import java.util.Arrays;
-import java.util.Random;
-
-import org.springframework.boot.actuate.metrics.CounterService;
 import org.springframework.stereotype.Component;
 
 /**
@@ -38,10 +36,9 @@ public class CongratsSlackCommand extends SelfAwareSlackCommand {
 
 	private final Random random;
 
-	public CongratsSlackCommand(SlackService slackService, SlackBootProperties slackBootProperties,
-			CounterService counterService, Self self) {
+	public CongratsSlackCommand(SlackService slackService, SlackBootProperties slackBootProperties, Self self) {
 
-		super(slackService, slackBootProperties, counterService, self);
+		super(slackService, slackBootProperties, self);
 		this.random = new Random();
 	}
 
@@ -59,8 +56,6 @@ public class CongratsSlackCommand extends SelfAwareSlackCommand {
 		} else {
 			getSlackService().sendMessage(getToken(), nextMessage(), message.getChannel(), true);
 		}
-
-		getCounterService().increment("slack.boot.executed." + this.getClass().getSimpleName());
 	}
 
 	/**

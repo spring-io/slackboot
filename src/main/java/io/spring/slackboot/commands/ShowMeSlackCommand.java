@@ -15,21 +15,19 @@
  */
 package io.spring.slackboot.commands;
 
+import java.io.IOException;
+import java.util.Arrays;
+
 import io.spring.slackboot.commands.domain.Guide;
 import io.spring.slackboot.core.SelfAwareSlackCommand;
 import io.spring.slackboot.core.domain.MessageEvent;
 import io.spring.slackboot.core.domain.Self;
 import io.spring.slackboot.core.domain.SlackBootProperties;
 import io.spring.slackboot.core.services.SlackService;
-
-import java.io.IOException;
-import java.util.Arrays;
-
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.actuate.metrics.CounterService;
 import org.springframework.stereotype.Component;
 
 /**
@@ -42,9 +40,8 @@ public class ShowMeSlackCommand extends SelfAwareSlackCommand {
 
 	private static final String GUIDE_CLASS = "a.guide--title";
 
-	public ShowMeSlackCommand(SlackService slackService, SlackBootProperties slackBootProperties,
-			CounterService counterService, Self self) {
-		super(slackService, slackBootProperties, counterService, self);
+	public ShowMeSlackCommand(SlackService slackService, SlackBootProperties slackBootProperties, Self self) {
+		super(slackService, slackBootProperties, self);
 	}
 
 	@Override
@@ -64,8 +61,6 @@ public class ShowMeSlackCommand extends SelfAwareSlackCommand {
 					.forEach(guide -> getSlackService().sendMessage(getToken(),
 							"Click here to see " + guide.getName() + " -> https://spring.io" + guide.getPath(), message.getChannel(),
 							true));
-
-			getCounterService().increment("slack.boot.executed." + this.getClass().getSimpleName());
 		} catch (IOException e) {
 			log.error(e.getMessage());
 			throw new RuntimeException(e);

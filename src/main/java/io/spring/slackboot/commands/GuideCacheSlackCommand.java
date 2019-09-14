@@ -15,6 +15,10 @@
  */
 package io.spring.slackboot.commands;
 
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Optional;
+
 import io.spring.slackboot.commands.domain.GitHubHookDetails;
 import io.spring.slackboot.commands.domain.Guide;
 import io.spring.slackboot.core.SelfAwareSlackCommand;
@@ -22,16 +26,10 @@ import io.spring.slackboot.core.domain.MessageEvent;
 import io.spring.slackboot.core.domain.Self;
 import io.spring.slackboot.core.domain.SlackBootProperties;
 import io.spring.slackboot.core.services.SlackService;
-
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Optional;
-
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.actuate.metrics.CounterService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.social.github.api.GitHubHook;
 import org.springframework.social.github.api.impl.GitHubTemplate;
@@ -48,10 +46,10 @@ public class GuideCacheSlackCommand extends SelfAwareSlackCommand {
 
 	private final GitHubTemplate gitHubTemplate;
 
-	public GuideCacheSlackCommand(SlackService slackService, SlackBootProperties slackBootProperties,
-			CounterService counterService, Self self, GitHubTemplate gitHubTemplate) {
+	public GuideCacheSlackCommand(SlackService slackService, SlackBootProperties slackBootProperties, Self self,
+			GitHubTemplate gitHubTemplate) {
 
-		super(slackService, slackBootProperties, counterService, self);
+		super(slackService, slackBootProperties, self);
 		this.gitHubTemplate = gitHubTemplate;
 	}
 
@@ -95,8 +93,6 @@ public class GuideCacheSlackCommand extends SelfAwareSlackCommand {
 
 			getSlackService().sendMessage(getToken(), "Gee, I don't know how to handle that.", message.getChannel(), true);
 		}
-
-		getCounterService().increment("slack.boot.executed." + this.getClass().getSimpleName());
 	}
 
 	private boolean all(MessageEvent message) {
@@ -144,11 +140,9 @@ public class GuideCacheSlackCommand extends SelfAwareSlackCommand {
 
 		if (response.getStatusCodeValue() < 300) {
 			getSlackService().sendMessage(getToken(), guide + " has been cleared.", message.getChannel(), true);
-			getCounterService().increment("slack.boot.guides.cacheCleared.successful");
 		} else {
 			getSlackService().sendMessage(getToken(), "Wow. Something went wrong with " + guide + ", " + response.toString(),
 					message.getChannel(), true);
-			getCounterService().increment("slack.boot.guides.cacheCleared.failure");
 		}
 
 	}

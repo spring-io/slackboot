@@ -15,12 +15,10 @@
  */
 package io.spring.slackboot.core;
 
-import io.spring.slackboot.core.domain.SlackBootProperties;
-import io.spring.slackboot.core.services.SlackService;
-
 import java.util.Objects;
 
-import org.springframework.boot.actuate.metrics.CounterService;
+import io.spring.slackboot.core.domain.SlackBootProperties;
+import io.spring.slackboot.core.services.SlackService;
 
 /**
  * Convenience base class for {@link SlackCommand}s. That way, commands don't have to inject these commonly used things
@@ -32,14 +30,11 @@ public abstract class AbstractSlackCommand implements SlackCommand {
 
 	private SlackService slackService;
 	private SlackBootProperties slackBootProperties;
-	private CounterService counterService;
 
-	public AbstractSlackCommand(SlackService slackService, SlackBootProperties slackBootProperties,
-			CounterService counterService) {
+	public AbstractSlackCommand(SlackService slackService, SlackBootProperties slackBootProperties) {
 
 		this.slackService = slackService;
 		this.slackBootProperties = slackBootProperties;
-		this.counterService = counterService;
 	}
 
 	public SlackService getSlackService() {
@@ -48,10 +43,6 @@ public abstract class AbstractSlackCommand implements SlackCommand {
 
 	public SlackBootProperties getSlackBootProperties() {
 		return slackBootProperties;
-	}
-
-	public CounterService getCounterService() {
-		return counterService;
 	}
 
 	public String getToken() {
@@ -67,18 +58,17 @@ public abstract class AbstractSlackCommand implements SlackCommand {
 			return false;
 		AbstractSlackCommand that = (AbstractSlackCommand) o;
 		return Objects.equals(slackService, that.slackService)
-				&& Objects.equals(slackBootProperties, that.slackBootProperties)
-				&& Objects.equals(counterService, that.counterService);
+				&& Objects.equals(slackBootProperties, that.slackBootProperties);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(slackService, slackBootProperties, counterService);
+		return Objects.hash(slackService, slackBootProperties);
 	}
 
 	@Override
 	public String toString() {
 		return "AbstractSlackCommand{" + "slackService=" + slackService + ", slackBootProperties=" + slackBootProperties
-				+ ", counterService=" + counterService + '}';
+				+ '}';
 	}
 }

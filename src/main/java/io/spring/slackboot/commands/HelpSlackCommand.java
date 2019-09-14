@@ -15,6 +15,12 @@
  */
 package io.spring.slackboot.commands;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 import io.spring.slackboot.core.SelfAwareSlackCommand;
 import io.spring.slackboot.core.SlackCommand;
 import io.spring.slackboot.core.domain.MessageEvent;
@@ -22,15 +28,7 @@ import io.spring.slackboot.core.domain.Self;
 import io.spring.slackboot.core.domain.SlackBootProperties;
 import io.spring.slackboot.core.services.MustacheTemplateService;
 import io.spring.slackboot.core.services.SlackService;
-
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
 import org.springframework.beans.BeansException;
-import org.springframework.boot.actuate.metrics.CounterService;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
@@ -45,10 +43,10 @@ public class HelpSlackCommand extends SelfAwareSlackCommand implements Applicati
 
 	private ApplicationContext applicationContext;
 
-	public HelpSlackCommand(SlackService slackService, SlackBootProperties slackBootProperties,
-			CounterService counterService, Self self, MustacheTemplateService mustacheTemplateService) {
+	public HelpSlackCommand(SlackService slackService, SlackBootProperties slackBootProperties, Self self,
+			MustacheTemplateService mustacheTemplateService) {
 
-		super(slackService, slackBootProperties, counterService, self);
+		super(slackService, slackBootProperties, self);
 		this.mustacheTemplateService = mustacheTemplateService;
 	}
 
@@ -76,9 +74,6 @@ public class HelpSlackCommand extends SelfAwareSlackCommand implements Applicati
 				model);
 
 		getSlackService().sendMessage(getToken(), helpMessage, message.getChannel(), true);
-
-		getCounterService().increment("slack.boot.executed." + this.getClass().getSimpleName());
-
 	}
 
 }

@@ -23,10 +23,10 @@ import io.spring.slackboot.core.domain.MessageEvent;
 import io.spring.slackboot.core.domain.Self;
 import io.spring.slackboot.core.domain.SlackBootProperties;
 import io.spring.slackboot.core.services.SlackService;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.boot.actuate.metrics.CounterService;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Configuration;
@@ -41,22 +41,16 @@ public class SelfAwareSlackCommandTests {
 
 	SelfAwareSlackCommand selfAwareSlackCommand;
 
-	@MockBean
-	SlackService slackService;
+	@MockBean SlackService slackService;
 
-	@MockBean
-	SlackBootProperties slackBootProperties;
+	@MockBean SlackBootProperties slackBootProperties;
 
-	@MockBean
-	CounterService counterService;
-
-	@MockBean
-	Self self;
+	@MockBean Self self;
 
 	@Before
 	public void setUp() {
 
-		this.selfAwareSlackCommand = new SelfAwareSlackCommand(slackService, slackBootProperties, counterService, self) {
+		this.selfAwareSlackCommand = new SelfAwareSlackCommand(slackService, slackBootProperties, self) {
 			@Override
 			protected boolean also(MessageEvent message) {
 				return message.getText().contains("should respond");
@@ -72,23 +66,20 @@ public class SelfAwareSlackCommandTests {
 	@Test
 	public void shouldHandleReceivingLoggedInEvent() {
 
-		//given
+		// given
 		Self self = new Self("abc123", "slackboot");
 		BotLoggedInEvent event = new BotLoggedInEvent(self);
 
 		// when
 		selfAwareSlackCommand.onApplicationEvent(event);
 
-		then(selfAwareSlackCommand)
-			.extracting("self")
-			.extracting("id", "name")
-			.contains(tuple("abc123", "slackboot"));
+		then(selfAwareSlackCommand).extracting("self").extracting("id", "name").contains(tuple("abc123", "slackboot"));
 	}
 
 	@Test
 	public void shouldIgnoreMessagesNotMentioningTheBot() {
 
-		//given
+		// given
 		Self self = new Self("abc123", "slackboot");
 		BotLoggedInEvent event = new BotLoggedInEvent(self);
 		selfAwareSlackCommand.onApplicationEvent(event);
@@ -103,7 +94,7 @@ public class SelfAwareSlackCommandTests {
 	@Test
 	public void shouldNotRespondToMessageNamingTheBotButMissingKeyPhrase() {
 
-		//given
+		// given
 		Self self = new Self("abc123", "slackboot");
 		BotLoggedInEvent event = new BotLoggedInEvent(self);
 		selfAwareSlackCommand.onApplicationEvent(event);
@@ -118,7 +109,7 @@ public class SelfAwareSlackCommandTests {
 	@Test
 	public void shouldRespondToMessagesNamingTheBotAndWithKeyPhrase() {
 
-		//given
+		// given
 		Self self = new Self("abc123", "slackboot");
 		BotLoggedInEvent event = new BotLoggedInEvent(self);
 		selfAwareSlackCommand.onApplicationEvent(event);

@@ -24,9 +24,7 @@ import io.spring.slackboot.core.services.SlackService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.actuate.metrics.CounterService;
 import org.springframework.boot.actuate.metrics.repository.InMemoryMetricRepository;
-import org.springframework.boot.actuate.metrics.writer.DefaultCounterService;
 import org.springframework.boot.actuate.metrics.writer.MetricWriter;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -47,7 +45,6 @@ public class AbstractSlackCommandTests {
 	@Test
 	public void shouldInitializeAllRequiredServicesThroughTheContainer() {
 
-		then(slackCommand.getCounterService()).isNotNull();
 		then(slackCommand.getSlackBootProperties()).isNotNull();
 		then(slackCommand.getSlackService()).isNotNull();
 
@@ -64,12 +61,9 @@ public class AbstractSlackCommandTests {
 		@Autowired
 		SlackBootProperties slackBootProperties;
 
-		@Autowired
-		CounterService counterService;
-
 		@Bean
 		AbstractSlackCommand slackCommand() {
-			return new AbstractSlackCommand(slackService, slackBootProperties, counterService) {
+			return new AbstractSlackCommand(slackService, slackBootProperties) {
 				@Override
 				public boolean match(MessageEvent message) {
 					return true;
@@ -91,12 +85,6 @@ public class AbstractSlackCommandTests {
 		MetricWriter metricWriter() {
 			return new InMemoryMetricRepository();
 		}
-
-		@Bean
-		CounterService counterService(MetricWriter metricWriter) {
-			return new DefaultCounterService(metricWriter);
-		}
-
 	}
 
 }

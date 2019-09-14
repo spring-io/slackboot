@@ -15,14 +15,12 @@
  */
 package io.spring.slackboot.commands;
 
+import java.util.Optional;
+
 import io.spring.slackboot.core.AbstractSlackCommand;
 import io.spring.slackboot.core.domain.MessageEvent;
 import io.spring.slackboot.core.domain.SlackBootProperties;
 import io.spring.slackboot.core.services.SlackService;
-
-import java.util.Optional;
-
-import org.springframework.boot.actuate.metrics.CounterService;
 import org.springframework.stereotype.Component;
 
 /**
@@ -34,9 +32,8 @@ public class UpdateComingSlackCommand extends AbstractSlackCommand {
 	public static final String GITHUB_REPO = "https://github.com/spring-io/slackboot";
 	public static final String TRAVIS_REPO = "https://travis-ci.com/spring-io/slackboot";
 
-	public UpdateComingSlackCommand(SlackService slackService, SlackBootProperties slackBootProperties,
-			CounterService counterService) {
-		super(slackService, slackBootProperties, counterService);
+	public UpdateComingSlackCommand(SlackService slackService, SlackBootProperties slackBootProperties) {
+		super(slackService, slackBootProperties);
 	}
 
 	@Override

@@ -15,6 +15,11 @@
  */
 package io.spring.slackboot.commands;
 
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import io.spring.slackboot.commands.domain.Guide;
 import io.spring.slackboot.core.SelfAwareSlackCommand;
 import io.spring.slackboot.core.domain.MessageEvent;
@@ -22,17 +27,10 @@ import io.spring.slackboot.core.domain.Self;
 import io.spring.slackboot.core.domain.SlackBootProperties;
 import io.spring.slackboot.core.services.MustacheTemplateService;
 import io.spring.slackboot.core.services.SlackService;
-
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.stream.Collectors;
-
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.actuate.metrics.CounterService;
 import org.springframework.stereotype.Component;
 
 /**
@@ -47,10 +45,10 @@ public class ListGuidesSlackCommand extends SelfAwareSlackCommand {
 
 	private final MustacheTemplateService mustacheTemplateService;
 
-	public ListGuidesSlackCommand(SlackService slackService, SlackBootProperties slackBootProperties,
-			CounterService counterService, Self self, MustacheTemplateService mustacheTemplateService) {
+	public ListGuidesSlackCommand(SlackService slackService, SlackBootProperties slackBootProperties, Self self,
+			MustacheTemplateService mustacheTemplateService) {
 
-		super(slackService, slackBootProperties, counterService, self);
+		super(slackService, slackBootProperties, self);
 		this.mustacheTemplateService = mustacheTemplateService;
 	}
 
@@ -75,8 +73,6 @@ public class ListGuidesSlackCommand extends SelfAwareSlackCommand {
 					.processTemplateIntoString(this.getClass().getSimpleName() + "-message", model);
 
 			getSlackService().sendMessage(getToken(), helpMessage, message.getChannel(), true);
-
-			getCounterService().increment("slack.boot.executed." + this.getClass().getSimpleName());
 
 		} catch (IOException e) {
 			log.error(e.getMessage());
