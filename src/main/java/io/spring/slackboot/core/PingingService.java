@@ -21,6 +21,7 @@ import java.time.LocalDateTime;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.TextMessage;
@@ -30,6 +31,7 @@ import org.springframework.web.socket.WebSocketSession;
  * @author Greg Turnquist
  */
 @Component
+@EnableScheduling
 public class PingingService {
 
 	private static final Logger log = LoggerFactory.getLogger(PingingService.class);
@@ -42,7 +44,7 @@ public class PingingService {
 	public PingingService() {
 
 		this.interval = Duration.ofMillis(5000);
-		reset();
+		this.lastTimeAMessageCameIn = LocalDateTime.now();
 	}
 
 	public WebSocketSession getSession() {
