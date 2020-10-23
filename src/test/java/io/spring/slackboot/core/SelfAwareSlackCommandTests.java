@@ -49,6 +49,7 @@ public class SelfAwareSlackCommandTests {
 	public void setUp() {
 
 		this.selfAwareSlackCommand = new SelfAwareSlackCommand(slackService, slackBootProperties) {
+
 			@Override
 			protected boolean also(MessageEvent message) {
 				return message.getText().contains("should respond");

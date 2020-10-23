@@ -72,6 +72,7 @@ public class SlackBootInitializerTests {
 
 		@Bean
 		SlackService slackService() {
+
 			return new SlackService() {
 				@Override
 				public RtmStartResponse rtmStart(@RequestParam("token") String token) {
@@ -103,7 +104,5 @@ public class SlackBootInitializerTests {
 				SlackWebSocketHandler slackWebSocketHandler) {
 			return new SlackBootInitializer(slackService, slackBootProperties, slackWebSocketHandler);
 		}
-
 	}
-
 }

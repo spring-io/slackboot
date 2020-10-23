@@ -18,12 +18,13 @@ package io.spring.slackboot.core;
 import static org.assertj.core.api.BDDAssertions.then;
 import static org.mockito.BDDMockito.*;
 
+import io.spring.slackboot.core.domain.SlackBootProperties;
+import io.spring.slackboot.core.handlers.SlackEventHandler;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import io.spring.slackboot.core.domain.SlackBootProperties;
-import io.spring.slackboot.core.handlers.SlackEventHandler;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,18 +46,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @SpringBootTest(classes = SlackWebSocketHandlerTests.TestConfig.class)
 public class SlackWebSocketHandlerTests {
 
-	@Autowired
-	SlackWebSocketHandler slackWebSocketHandler;
+	@Autowired SlackWebSocketHandler slackWebSocketHandler;
 
-	@Autowired
-	ObjectMapper objectMapper;
+	@Autowired ObjectMapper objectMapper;
 
-	@MockBean
-	private WebSocketSession session;
+	@MockBean private WebSocketSession session;
 
-	@MockBean
-	private SlackEventHandler handler;
-
+	@MockBean private SlackEventHandler handler;
 
 	@Test
 	public void shouldHandleSimpleValidMessage() throws Exception {
@@ -118,20 +114,14 @@ public class SlackWebSocketHandlerTests {
 			return new ObjectMapper();
 		}
 
-		@MockBean
-		DeadmanSwitch deadmanSwitch;
+		@MockBean DeadmanSwitch deadmanSwitch;
 
-		@MockBean
-		PingingService pingingService;
+		@MockBean PingingService pingingService;
 
 		@Bean
-		SlackWebSocketHandler slackWebSocketHandler(ObjectMapper objectMapper,
-													SlackBootProperties slackBootProperties,
-													DeadmanSwitch deadmanSwitch,
-													List<SlackEventHandler> handlers,
-													PingingService pingingService) {
+		SlackWebSocketHandler slackWebSocketHandler(ObjectMapper objectMapper, SlackBootProperties slackBootProperties,
+				DeadmanSwitch deadmanSwitch, List<SlackEventHandler> handlers, PingingService pingingService) {
 			return new SlackWebSocketHandler(objectMapper, slackBootProperties, deadmanSwitch, handlers, pingingService);
 		}
 	}
-
 }

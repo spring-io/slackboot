@@ -61,6 +61,7 @@ public class AbstractSlackCommandTests {
 
 		@Bean
 		AbstractSlackCommand slackCommand() {
+
 			return new AbstractSlackCommand(slackService, slackBootProperties) {
 				@Override
 				public boolean match(MessageEvent message) {
@@ -79,5 +80,4 @@ public class AbstractSlackCommandTests {
 			return mock(SlackService.class);
 		}
 	}
-
 }

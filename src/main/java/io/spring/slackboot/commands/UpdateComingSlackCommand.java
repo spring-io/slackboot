@@ -15,12 +15,13 @@
  */
 package io.spring.slackboot.commands;
 
-import java.util.Optional;
-
 import io.spring.slackboot.core.AbstractSlackCommand;
 import io.spring.slackboot.core.domain.MessageEvent;
 import io.spring.slackboot.core.domain.SlackBootProperties;
 import io.spring.slackboot.core.services.SlackService;
+
+import java.util.Optional;
+
 import org.springframework.stereotype.Component;
 
 /**
@@ -50,8 +51,10 @@ public class UpdateComingSlackCommand extends AbstractSlackCommand {
 	public void handle(MessageEvent message) {
 
 		// New Github commit?
-		message.getAttachments().stream().filter(attachment -> attachment.getText().contains("<" + GITHUB_REPO + "/commit"))
-				.findAny().ifPresent(attachment -> {
+		message.getAttachments().stream() //
+				.filter(attachment -> attachment.getText().contains("<" + GITHUB_REPO + "/commit")) //
+				.findAny() //
+				.ifPresent(attachment -> {
 					getSlackService().sendMessage(getToken(), "Ooh! Has someone made a change?", message.getChannel(), true);
 				});
 
@@ -59,7 +62,8 @@ public class UpdateComingSlackCommand extends AbstractSlackCommand {
 		message.getAttachments().stream()
 				.filter(attachment -> attachment.getText().contains("Build <" + TRAVIS_REPO + "/builds")
 						&& attachment.getText().contains("passed in"))
-				.findAny().ifPresent(attachment -> {
+				.findAny() //
+				.ifPresent(attachment -> {
 					getSlackService().sendMessage(getToken(), "Yipee! Looks like a new upgrade for me.", message.getChannel(),
 							true);
 				});
@@ -68,7 +72,8 @@ public class UpdateComingSlackCommand extends AbstractSlackCommand {
 		message.getAttachments().stream()
 				.filter(attachment -> attachment.getText().contains("Build <" + TRAVIS_REPO + "/builds")
 						&& attachment.getText().contains("errored in"))
-				.findAny().ifPresent(attachment -> {
+				.findAny() //
+				.ifPresent(attachment -> {
 					getSlackService().sendMessage(getToken(), ":cry: Sorry your build job failed.", message.getChannel(), true);
 				});
 

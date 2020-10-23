@@ -15,18 +15,19 @@
  */
 package io.spring.slackboot.commands;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
 import io.spring.slackboot.core.SelfAwareSlackCommand;
 import io.spring.slackboot.core.SlackCommand;
 import io.spring.slackboot.core.domain.MessageEvent;
 import io.spring.slackboot.core.domain.SlackBootProperties;
 import io.spring.slackboot.core.services.MustacheTemplateService;
 import io.spring.slackboot.core.services.SlackService;
+
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -62,9 +63,9 @@ public class HelpSlackCommand extends SelfAwareSlackCommand implements Applicati
 	@Override
 	public void handle(MessageEvent message) {
 
-		List<String> commandHelp = applicationContext
-				.getBeansOfType(SlackCommand.class).values().stream().map(command -> mustacheTemplateService
-						.processTemplateIntoString(command.getClass().getSimpleName() + "-help", Collections.emptyMap()))
+		List<String> commandHelp = applicationContext.getBeansOfType(SlackCommand.class).values().stream() //
+				.map(command -> mustacheTemplateService.processTemplateIntoString(command.getClass().getSimpleName() + "-help",
+						Collections.emptyMap())) //
 				.collect(Collectors.toList());
 
 		Map<String, Object> model = new HashMap<>();
