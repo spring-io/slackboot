@@ -41,7 +41,7 @@ pipeline {
             }
 
 			steps {
-	            sh './mvnw package'
+	            sh 'MAVEN_OPTS="-Duser.name=jenkins -Duser.home=/tmp/jenkins-home" ./mvnw package'
 	            sh './deploy'
 			}
 		}
