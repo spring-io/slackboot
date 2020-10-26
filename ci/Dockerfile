@@ -11,6 +11,6 @@ RUN tar xvfz cf-linux.tgz
 
 RUN chmod 755 /cf
 
-RUN mkdir /.cf && chmod 666 /.cf
+RUN mkdir /.cf && chmod 777 /.cf
 
 
