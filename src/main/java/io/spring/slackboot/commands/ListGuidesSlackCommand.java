@@ -15,17 +15,18 @@
  */
 package io.spring.slackboot.commands;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.stream.Collectors;
-
 import io.spring.slackboot.commands.domain.Guide;
 import io.spring.slackboot.core.SelfAwareSlackCommand;
 import io.spring.slackboot.core.domain.MessageEvent;
 import io.spring.slackboot.core.domain.SlackBootProperties;
 import io.spring.slackboot.core.services.MustacheTemplateService;
 import io.spring.slackboot.core.services.SlackService;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.slf4j.Logger;
@@ -40,7 +41,7 @@ public class ListGuidesSlackCommand extends SelfAwareSlackCommand {
 
 	private static final Logger log = LoggerFactory.getLogger(ListGuidesSlackCommand.class);
 
-	private static final String GUIDE_CLASS = "a.guide--title";
+	private static final String GUIDE_CLASS = "a.guide-link";
 
 	private final MustacheTemplateService mustacheTemplateService;
 
@@ -62,8 +63,11 @@ public class ListGuidesSlackCommand extends SelfAwareSlackCommand {
 		try {
 			Document doc = Jsoup.connect("https://spring.io/guides").get();
 
-			List<Guide> guides = doc.select(GUIDE_CLASS).stream().map(element -> element.attr("href")).sorted()
-					.map(Guide::new).collect(Collectors.toList());
+			List<Guide> guides = doc.select(GUIDE_CLASS).stream() //
+					.map(element -> element.attr("href")) //
+					.sorted() //
+					.map(Guide::new) //
+					.collect(Collectors.toList());
 
 			HashMap<String, Object> model = new HashMap<>();
 			model.put("guides", guides);
