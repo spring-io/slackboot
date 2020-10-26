@@ -1,4 +1,6 @@
-#!/bin/bash
+#!/bin/bash -x
+
+set -euo pipefail
 
 # Login to PWS
 /cf api https://api.run.pivotal.io
