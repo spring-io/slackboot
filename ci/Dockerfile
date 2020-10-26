@@ -10,3 +10,5 @@ RUN wget -O cf-linux.tgz "https://cli.run.pivotal.io/stable?release=linux64-bina
 RUN tar xvfz cf-linux.tgz
 
 RUN chmod 755 ./cf
+
+
