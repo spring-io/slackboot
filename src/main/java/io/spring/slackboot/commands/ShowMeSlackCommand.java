@@ -38,7 +38,7 @@ public class ShowMeSlackCommand extends SelfAwareSlackCommand {
 
 	private static final Logger log = LoggerFactory.getLogger(ShowMeSlackCommand.class);
 
-	private static final String GUIDE_CLASS = "a.guide--title";
+	private static final String GUIDE_CLASS = "a.guide-link";
 
 	public ShowMeSlackCommand(SlackService slackService, SlackBootProperties slackBootProperties) {
 		super(slackService, slackBootProperties);

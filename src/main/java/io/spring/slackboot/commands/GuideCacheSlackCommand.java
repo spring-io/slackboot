@@ -42,7 +42,7 @@ import org.springframework.stereotype.Component;
 public class GuideCacheSlackCommand extends SelfAwareSlackCommand {
 
 	private static final Logger log = LoggerFactory.getLogger(GuideCacheSlackCommand.class);
-	private static final String GUIDE_CLASS = "a.guide--title";
+	private static final String GUIDE_CLASS = "a.guide-link";
 
 	private final GitHubTemplate gitHubTemplate;
 
