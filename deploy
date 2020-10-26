@@ -2,6 +2,8 @@
 
 set -euo pipefail
 
+ls -ld /.cf
+
 # Login to PWS
 /cf api https://api.run.pivotal.io
 /cf auth ${PWS_USR} ${PWS_PSW}
