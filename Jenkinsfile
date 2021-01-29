@@ -37,7 +37,7 @@ pipeline {
 			options { timeout(time: 30, unit: 'MINUTES') }
 
 			environment {
-                PWS = credentials('slackboot-deployment')
+                PWS = credentials('pcfone-builds_at_springframework.org')
             }
 
 			steps {
