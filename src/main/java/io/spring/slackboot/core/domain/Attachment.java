@@ -52,6 +52,10 @@ public class Attachment {
 		this.pretext = pretext;
 	}
 
+	public boolean contains(String matchingText) {
+		return this.text != null && this.text.contains(matchingText);
+	}
+
 	@Override
 	public boolean equals(Object o) {
 		if (this == o)

@@ -40,10 +40,11 @@ public class UpdateComingSlackCommand extends AbstractSlackCommand {
 	@Override
 	public boolean match(MessageEvent message) {
 
-		return Optional.ofNullable(message.getAttachments())
-				.map(attachments -> attachments.stream()
-						.anyMatch(attachment -> attachment.getText().contains("<" + GITHUB_REPO + "/commit")
-								|| attachment.getText().contains("Build <" + TRAVIS_REPO)))
+		return Optional.ofNullable(message.getAttachments()) //
+				.map(attachments -> attachments.stream() //
+						.anyMatch(attachment -> attachment.contains("<" + GITHUB_REPO + "/commit") //
+								|| //
+								attachment.contains("Build <" + TRAVIS_REPO)))
 				.orElse(false);
 	}
 
@@ -52,7 +53,7 @@ public class UpdateComingSlackCommand extends AbstractSlackCommand {
 
 		// New Github commit?
 		message.getAttachments().stream() //
-				.filter(attachment -> attachment.getText().contains("<" + GITHUB_REPO + "/commit")) //
+				.filter(attachment -> attachment.contains("<" + GITHUB_REPO + "/commit")) //
 				.findAny() //
 				.ifPresent(attachment -> {
 					getSlackService().sendMessage(getToken(), "Ooh! Has someone made a change?", message.getChannel(), true);
@@ -60,8 +61,8 @@ public class UpdateComingSlackCommand extends AbstractSlackCommand {
 
 		// New Travis build?
 		message.getAttachments().stream()
-				.filter(attachment -> attachment.getText().contains("Build <" + TRAVIS_REPO + "/builds")
-						&& attachment.getText().contains("passed in"))
+				.filter(
+						attachment -> attachment.contains("Build <" + TRAVIS_REPO + "/builds") && attachment.contains("passed in"))
 				.findAny() //
 				.ifPresent(attachment -> {
 					getSlackService().sendMessage(getToken(), "Yipee! Looks like a new upgrade for me.", message.getChannel(),
@@ -70,8 +71,8 @@ public class UpdateComingSlackCommand extends AbstractSlackCommand {
 
 		// Failing Travis build?
 		message.getAttachments().stream()
-				.filter(attachment -> attachment.getText().contains("Build <" + TRAVIS_REPO + "/builds")
-						&& attachment.getText().contains("errored in"))
+				.filter(
+						attachment -> attachment.contains("Build <" + TRAVIS_REPO + "/builds") && attachment.contains("errored in"))
 				.findAny() //
 				.ifPresent(attachment -> {
 					getSlackService().sendMessage(getToken(), ":cry: Sorry your build job failed.", message.getChannel(), true);
