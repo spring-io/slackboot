@@ -1,10 +1,10 @@
-logging:
-  level:
-    io:
-      spring:
-        slackboot:
-          core:
-            DeadmanSwitch: DEBUG
-            PingingService: DEBUG
-            services:
-              SlackService: DEBUG
+#logging:
+#  level:
+#    io:
+#      spring:
+#        slackboot:
+#          core:
+#            DeadmanSwitch: DEBUG
+#            PingingService: DEBUG
+#            services:
+#              SlackService: DEBUG
