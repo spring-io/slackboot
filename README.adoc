@@ -16,7 +16,7 @@ All of these use cases are great reasons to essentially run what Jenkins does on
 
 IMPORTANT: To do this you must have Docker installed on your machine.
 
-1. `docker run --user 1001 -it --mount type=bind,source="$(pwd)",target=/slackboot-github springci/slackboot:latest /bin/bash`
+1. `docker run -it --mount type=bind,source="$(pwd)",target=/slackboot-github springci/slackboot:latest /bin/bash`
 +
 This will launch the Docker image and mount your source code at `spring-hateoas-github`.
 +

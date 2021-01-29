@@ -1,13 +1,13 @@
-#!/bin/bash
+#!/bin/bash -x
 
 set -euo pipefail
 
 ls -ld /.cf
 
 # Login to PWS
-/cf api https://api.run.pivotal.io
+/cf api https://api.run.pcfone.io
 /cf auth ${PWS_USR} ${PWS_PSW}
 
 # Target spring.io and deploy
-/cf target -o spring.io -s Guides
+/cf target -o group-spring -s spring-guides
 /cf push slackboot -p target/slackboot-*.jar
