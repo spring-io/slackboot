@@ -80,7 +80,7 @@ public class SlackMessageHandler extends SlackEventHandler<MessageEvent> {
 	 * @return
 	 */
 	@Override
-	protected TypeReference<?> type() {
+	protected TypeReference<MessageEvent> type() {
 		return new TypeReference<MessageEvent>() {};
 	}
 }

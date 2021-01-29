@@ -25,15 +25,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 
@@ -42,7 +40,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 /**
  * @author Greg Turnquist
  */
-@RunWith(SpringRunner.class)
 @SpringBootTest(classes = SlackWebSocketHandlerTests.TestConfig.class)
 public class SlackWebSocketHandlerTests {
 
@@ -83,7 +80,7 @@ public class SlackWebSocketHandlerTests {
 		slackWebSocketHandler.handleTextMessage(session, message);
 
 		then(slackWebSocketHandler.getSlackEventHandlers()).hasSize(1);
-		verifyZeroInteractions(handler);
+		verifyNoInteractions(handler);
 	}
 
 	@Test

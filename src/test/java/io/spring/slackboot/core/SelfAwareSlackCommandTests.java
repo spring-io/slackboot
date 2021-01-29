@@ -24,18 +24,15 @@ import io.spring.slackboot.core.domain.Self;
 import io.spring.slackboot.core.domain.SlackBootProperties;
 import io.spring.slackboot.core.services.SlackService;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.test.context.junit4.SpringRunner;
 
 /**
  * @author Greg Turnquist
  */
-@RunWith(SpringRunner.class)
 @SpringBootTest(classes = SelfAwareSlackCommandTests.TestConfig.class)
 public class SelfAwareSlackCommandTests {
 
@@ -45,7 +42,7 @@ public class SelfAwareSlackCommandTests {
 
 	@MockBean SlackBootProperties slackBootProperties;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 
 		this.selfAwareSlackCommand = new SelfAwareSlackCommand(slackService, slackBootProperties) {
@@ -72,7 +69,10 @@ public class SelfAwareSlackCommandTests {
 		// when
 		selfAwareSlackCommand.onApplicationEvent(event);
 
-		then(selfAwareSlackCommand).extracting("self").extracting("id", "name").contains(tuple("abc123", "slackboot"));
+		then(selfAwareSlackCommand) //
+				.extracting("self") //
+				.extracting("id", "name") //
+				.contains("abc123", "slackboot");
 	}
 
 	@Test

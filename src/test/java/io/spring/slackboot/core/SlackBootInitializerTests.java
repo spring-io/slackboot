@@ -25,8 +25,7 @@ import io.spring.slackboot.core.services.SlackService;
 
 import java.util.concurrent.CountDownLatch;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -34,13 +33,11 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  * @author Greg Turnquist
  */
-@RunWith(SpringRunner.class)
 @SpringBootTest(classes = SlackBootInitializerTests.TestConfig.class)
 public class SlackBootInitializerTests {
 
@@ -57,8 +54,7 @@ public class SlackBootInitializerTests {
 
 		countDownLatch.await();
 
-		verifyZeroInteractions(slackWebSocketHandler);
-
+		verifyNoInteractions(slackWebSocketHandler);
 	}
 
 	@Configuration

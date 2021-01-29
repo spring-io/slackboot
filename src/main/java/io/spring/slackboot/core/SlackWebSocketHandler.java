@@ -15,13 +15,14 @@
  */
 package io.spring.slackboot.core;
 
+import io.spring.slackboot.core.domain.SlackBootProperties;
+import io.spring.slackboot.core.handlers.SlackEventHandler;
+
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
-import io.spring.slackboot.core.domain.SlackBootProperties;
-import io.spring.slackboot.core.handlers.SlackEventHandler;
-import org.apache.commons.lang.math.RandomUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,6 +51,8 @@ class SlackWebSocketHandler extends TextWebSocketHandler {
 	private List<SlackEventHandler> slackEventHandlers;
 	private final PingingService pingingService;
 
+	private final static Random RANDOM = new Random();
+
 	public SlackWebSocketHandler(ObjectMapper objectMapper, SlackBootProperties slackBootProperties,
 			DeadmanSwitch deadmanSwitch, @Autowired(required = false) List<SlackEventHandler> slackEventHandlers,
 			PingingService pingingService) {
@@ -73,7 +76,7 @@ class SlackWebSocketHandler extends TextWebSocketHandler {
 			pingingService.reset();
 
 			if (slackBootProperties.isRandomNap()) {
-				if (RandomUtils.nextBoolean()) {
+				if (RANDOM.nextBoolean()) {
 					log.info("I think I'll just take a little nap...");
 					Thread.sleep(120000L);
 				}

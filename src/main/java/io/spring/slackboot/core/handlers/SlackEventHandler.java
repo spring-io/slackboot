@@ -97,5 +97,5 @@ public abstract class SlackEventHandler<T> {
 	 *
 	 * @return
 	 */
-	protected abstract TypeReference<?> type();
+	protected abstract TypeReference<T> type();
 }
