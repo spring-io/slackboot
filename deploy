@@ -4,10 +4,10 @@ set -euo pipefail
 
 ls -ld /.cf
 
-# Login to PWS
-/cf api https://api.run.pcfone.io
+# Login
+/cf api https://api.sc2-04-pcf1-system.oc.vmware.com
 /cf auth ${PWS_USR} ${PWS_PSW}
 
 # Target spring.io and deploy
-/cf target -o group-spring -s spring-guides
+/cf target -o Spring -s spring-guides
 /cf push slackboot -p target/slackboot-*.jar

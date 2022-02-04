@@ -37,7 +37,7 @@ pipeline {
 			options { timeout(time: 30, unit: 'MINUTES') }
 
 			environment {
-                PWS = credentials('pcfone-builds_at_springframework.org')
+                PWS = credentials('pcf1-internal')
             }
 
 			steps {
